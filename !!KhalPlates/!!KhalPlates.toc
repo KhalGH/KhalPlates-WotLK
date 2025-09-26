@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: KhalPlates
+## Version: 1.0
+## Notes: Customized nameplates
+## Author: Khal
+
+Totems.xml
+KhalPlates_Customize.lua
+KhalPlates.lua
