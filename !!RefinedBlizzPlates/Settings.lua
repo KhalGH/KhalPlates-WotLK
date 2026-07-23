@@ -13,9 +13,8 @@ RBP.dbp.globalOffsetX = 10.5  -- Global offset X for nameplates
 RBP.dbp.globalOffsetY = 21 -- Global offset Y for nameplates
 RBP.dbp.targetScale = 1    -- Target scale factor
 RBP.dbp.friendlyScale = 1  -- Friendly scale factor
--- Runtime references for previous values in profile changes
-RBP.globalOffsetX = RBP.dbp.globalOffsetX
-RBP.globalOffsetY = RBP.dbp.globalOffsetY
+RBP.dbp.modNonTargetAlpha = false
+RBP.dbp.nonTargetAlpha = 0.5
 -- Box Selection Space
 RBP.dbp.clickboxWidthFactor = 1
 RBP.dbp.clickboxHeightFactor = 1
@@ -101,8 +100,11 @@ RBP.dbp.healthText_color = {1, 1, 1} -- white
 RBP.dbp.healthText_format = 1
 RBP.dbp.healthText_hideMax = true
 -- Low Health Coloring
-RBP.dbp.lowHpColor_enabled = true
-RBP.dbp.lowHpColor_threshold = 25
+RBP.dbp.lowHpColor_EnemyPlayers = false
+RBP.dbp.lowHpColor_EnemyNPCs = false
+RBP.dbp.lowHpColor_FriendlyPlayers = false
+RBP.dbp.lowHpColor_FriendlyNPCs = false
+RBP.dbp.lowHpColor_threshold = 0.25
 RBP.dbp.lowHpColor_color = {1, 0, 1}
 -- Threat Overlay
 RBP.dbp.enableAggroColoring = false
@@ -168,7 +170,7 @@ RBP.dbp.classIcon_size = 21
 RBP.dbp.classIcon_anchor = "Left"
 RBP.dbp.classIcon_offsetX = 0
 RBP.dbp.classIcon_offsetY = 0
--- Barless Plate
+-- Barless Plate: Enable Filters
 RBP.dbp.barlessPlate_filterBG = 3
 RBP.dbp.barlessPlate_filterArena = 0
 RBP.dbp.barlessPlate_filterPvE = 3
@@ -182,38 +184,56 @@ local BarlessPlateFilterValues = {
 local function IsBarlessPlateDisabled()
 	return RBP.dbp.barlessPlate_filterPvE == 0 and RBP.dbp.barlessPlate_filterBG == 0 and RBP.dbp.barlessPlate_filterArena == 0 and RBP.dbp.barlessPlate_filterOpenWorld == 0
 end
+-- Barless Plate: Target Settings
 RBP.dbp.barlessPlate_excludeTarget = false
 RBP.dbp.barlessPlate_targetGlowAlpha = 1
 RBP.dbp.barlessPlate_targetGlowColor = {1, 0.75, 0}
-RBP.dbp.barlessPlate_nameColorByHP = false
+-- Barless Plate: Player Name Text
+RBP.dbp.barlessPlate_showText = true
 RBP.dbp.barlessPlate_textFont = RBP.BlizzFontKey
 RBP.dbp.barlessPlate_textSize = 14
 RBP.dbp.barlessPlate_textOutline = "OUTLINE"
-RBP.dbp.barlessPlate_textColor = {0.1, 0, 1}
-RBP.dbp.barlessPlate_classColors = true
 RBP.dbp.barlessPlate_offset = 0
-RBP.dbp.barlessPlate_NPCnameColorByHP = false
+RBP.dbp.barlessPlate_textColor = {0.1, 0, 1}
+RBP.dbp.barlessPlate_nameColorByHP = false
+RBP.dbp.barlessPlate_classColors = true
+-- Barless Plate: NPC Name Text
+RBP.dbp.barlessPlate_showNPCtext = true
 RBP.dbp.barlessPlate_NPCtextFont = RBP.RefinedFontKey
 RBP.dbp.barlessPlate_NPCtextSize = 13
 RBP.dbp.barlessPlate_NPCtextOutline = "OUTLINE"
-RBP.dbp.barlessPlate_NPCtextColor = {0, 1, 0.1}
 RBP.dbp.barlessPlate_NPCoffset = 0
+RBP.dbp.barlessPlate_NPCtextColor = {0, 1, 0.1}
+RBP.dbp.barlessPlate_NPCnameColorByHP = false
+-- Barless Plate: Player Health Text
 RBP.dbp.barlessPlate_showHealthText = true
-RBP.dbp.barlessPlate_showNPCHealthText = false
-RBP.dbp.barlessPlate_healthTextSize = 11
 RBP.dbp.barlessPlate_healthTextAnchor = "Bottom"
 RBP.dbp.barlessPlate_healthTextOffsetX = 0
 RBP.dbp.barlessPlate_healthTextOffsetY = 0
+RBP.dbp.barlessPlate_healthTextFont = RBP.RefinedFontKey
+RBP.dbp.barlessPlate_healthTextSize = 11
+RBP.dbp.barlessPlate_healthTextOutline = "OUTLINE"
+-- Barless Plate: NPC Health Text
+RBP.dbp.barlessPlate_showNPCHealthText = false
+RBP.dbp.barlessPlate_NPChealthTextAnchor = "Bottom"
+RBP.dbp.barlessPlate_NPChealthTextOffsetX = 0
+RBP.dbp.barlessPlate_NPChealthTextOffsetY = 0
+RBP.dbp.barlessPlate_NPChealthTextFont = RBP.RefinedFontKey
+RBP.dbp.barlessPlate_NPChealthTextSize = 11
+RBP.dbp.barlessPlate_NPChealthTextOutline = "OUTLINE"
+-- Barless Plate: Raid Target Icon
 RBP.dbp.barlessPlate_showRaidTarget = false
 RBP.dbp.barlessPlate_raidTargetIconSize = 30
 RBP.dbp.barlessPlate_raidTargetIconAnchor = "Top"
 RBP.dbp.barlessPlate_raidTargetIconOffsetX = 0
 RBP.dbp.barlessPlate_raidTargetIconOffsetY = 0
+-- Barless Plate: Class Icon
 RBP.dbp.barlessPlate_showClassIcon = false
 RBP.dbp.barlessPlate_classIconSize = 32
 RBP.dbp.barlessPlate_classIconAnchor = "Top"
 RBP.dbp.barlessPlate_classIconOffsetX = 0
 RBP.dbp.barlessPlate_classIconOffsetY = 0
+-- Barless Plate: BG Healer Icon
 RBP.dbp.barlessPlate_BGHiconSize = 36
 RBP.dbp.barlessPlate_BGHiconAnchor = "Top"
 RBP.dbp.barlessPlate_BGHiconOffsetX = 0
@@ -290,6 +310,7 @@ RBP.MainOptionTable = {
 						RBP.dbp[info[#info]] = val
 						if val == "Blizzard" then
 							RBP.dbp.globalOffsetX = 0
+							RBP.dbp.globalOffsetY = 0
 							RBP.dbp.nameText_font = RBP.BlizzFontKey
 							RBP.dbp.nameText_size = 13
 							RBP.dbp.nameText_width = 250
@@ -316,6 +337,7 @@ RBP.MainOptionTable = {
 							RBP.dbp.classIcon_anchor = "Top"
 						else
 							RBP.dbp.globalOffsetX = 10.5
+							RBP.dbp.globalOffsetY = 21
 							RBP.dbp.nameText_font = RBP.RefinedFontKey
 							RBP.dbp.nameText_size = 7.5
 							RBP.dbp.nameText_width = 85
@@ -375,7 +397,6 @@ RBP.MainOptionTable = {
 						RBP.dbp.raidTargetIcon_offsetY = 0
 						RBP.dbp.classIcon_offsetX = 0
 						RBP.dbp.classIcon_offsetY = 0
-						RBP:MoveAllShownPlates(RBP.dbp.globalOffsetX - RBP.globalOffsetX, 0)
 						RBP:UpdateAllTexts()
 						RBP:UpdateAllHealthBars()
 						RBP:UpdateAllCastBars()
@@ -385,7 +406,6 @@ RBP.MainOptionTable = {
 						RBP:UpdateAllCastBarBorders()
 						RBP:UpdateAllShownPlates()
 						RBP:UpdateClickboxAttributes()
-						RBP.globalOffsetX = RBP.dbp.globalOffsetX
 					end,
 				},
 				lineBreak3 = {order = 5, type = "description", name = ""},
@@ -415,8 +435,7 @@ RBP.MainOptionTable = {
 					step = 0.1,
 					set = function(info, val)
 						RBP.dbp.globalOffsetX = val
-						RBP:MoveAllShownPlates(RBP.dbp.globalOffsetX - RBP.globalOffsetX, 0)
-						RBP.globalOffsetX = RBP.dbp.globalOffsetX
+						RBP:UpdateAllShownPlates()
 					end,
 				},
 				globalOffsetY = {
@@ -429,8 +448,7 @@ RBP.MainOptionTable = {
 					step = 0.1,
 					set = function(info, val)
 						RBP.dbp.globalOffsetY = val
-						RBP:MoveAllShownPlates(0, RBP.dbp.globalOffsetY - RBP.globalOffsetY)
-						RBP.globalOffsetY = RBP.dbp.globalOffsetY
+						RBP:UpdateAllShownPlates()
 					end,
 				},
 				lineBreak6 = {order = 11, type = "description", name = ""},
@@ -452,7 +470,7 @@ RBP.MainOptionTable = {
 					order = 14,
 					type = "range",
 					name = L["Friendly Scale Factor"],
-					desc = L["Adjusts friendly nameplate scale, applied multiplicatively with the global scale. Affects the visual size and the clickbox"],
+					desc = L["Adjusts friendly nameplate scale, applied multiplicatively with the global scale. Affects the visual size and the clickbox."],
 					min = 0.5,
 					max = 1,
 					step = 0.01,
@@ -464,15 +482,42 @@ RBP.MainOptionTable = {
 				},
 				lineBreak8 = {order = 15, type = "description", name = ""},
 				lineBreak9 = {order = 16, type = "description", name = ""},
-				clickbox_header = {
+				modNonTargetAlpha = {
 					order = 17,
+					type = "toggle",
+					name = L["Non-target Alpha Mod"],
+					desc = L["Overrides non-target nameplate opacity. May slightly increase CPU usage."],
+					set = function(info, val)
+						RBP.dbp[info[#info]] = val
+						RBP:UpdateNonTargetAlphaDriver()
+					end,
+				},
+				nonTargetAlpha = {
+					order = 18,
+					type = "range",
+					name = L["Non-target Alpha"],
+					min = 0,
+					max = 0.99,
+					step = 0.01,
+					isPercent = true,
+					set = function(info, val)
+						RBP.dbp[info[#info]] = val
+					end,
+					disabled = function()
+						return not RBP.dbp.modNonTargetAlpha
+					end,
+				},
+				lineBreak10 = {order = 19, type = "description", name = ""},
+				lineBreak11 = {order = 20, type = "description", name = ""},
+				clickbox_header = {
+					order = 21,
 					type = "header",
 					name = L["Box Selection Space"],
 				},
-				lineBreak10 = {order = 18, type = "description", name = ""},
-				lineBreak11 = {order = 19, type = "description", name = ""},
+				lineBreak12 = {order = 22, type = "description", name = ""},
+				lineBreak13 = {order = 23, type = "description", name = ""},
 				clickboxWidthFactor = {
-					order = 20,
+					order = 24,
 					type = "range",
 					name = L["Clickbox Width Factor"],
 					desc = L["Scales the nameplate clickbox relative to its original size. Recommended to change this setting while out of combat."],
@@ -486,7 +531,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				clickboxHeightFactor = {
-					order = 21,
+					order = 25,
 					type = "range",
 					name = L["Clickbox Height Factor"],
 					desc = L["Scales the nameplate clickbox relative to its original size. Recommended to change this setting while out of combat."],
@@ -500,7 +545,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				friendlyClickthrough = {
-					order = 22,
+					order = 26,
 					type = "toggle",
 					name = L["Click-through Friendly Nameplates"],
 					desc = L["Disable friendly nameplates clickboxes inside PvE and PvP instances."],
@@ -511,7 +556,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				showClickbox = {
-					order = 23,
+					order = 27,
 					type = "toggle",
 					name = L["Show Clickbox"],
 					desc = L["Displays the Box Selection Space (Clickbox) of nameplates"],
@@ -520,16 +565,16 @@ RBP.MainOptionTable = {
 						RBP:UpdateAllClickboxTextures()
 					end,
 				},
-				lineBreak12 = {order = 24, type = "description", name = ""},
-				lineBreak13 = {order = 25, type = "description", name = ""},
+				lineBreak14 = {order = 28, type = "description", name = ""},
+				lineBreak15 = {order = 29, type = "description", name = ""},
 				misc_header = {
-					order = 26,
+					order = 30,
 					type = "header",
 					name = L["Miscellaneous Settings"],
 				},
-				lineBreak14 = {order = 27, type = "description", name = ""},
+				lineBreak16 = {order = 31, type = "description", name = ""},
 				clampTarget = {
-					order = 29,
+					order = 32,
 					type = "toggle",
 					name = L["Clamp Target"],
 					desc = L["Prevents targeted enemy nameplate from going above the top of the screen."],
@@ -540,7 +585,7 @@ RBP.MainOptionTable = {
 					end,					
 				},
 				clampBoss = {
-					order = 30,
+					order = 33,
 					type = "toggle",
 					name = L["Clamp Bosses"],
 					desc = L["Prevents boss nameplates inside instances from going above the top of the screen."],
@@ -551,7 +596,7 @@ RBP.MainOptionTable = {
 					end,		
 				},
 				upperborder = {
-					order = 31,
+					order = 34,
 					type = "range",
 					name = L["Clamping Top Inset"],
 					desc = L["Adjusts the distance below the top of the screen where clamped nameplates will stop."],
@@ -567,7 +612,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				levelFilter = {
-					order = 32,
+					order = 35,
 					type = "range",
 					name = L["Level Filter"],
 					desc = L["Minimum unit level required for the nameplate to be shown."],
@@ -580,7 +625,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				LDWfix = {
-					order = 33,
+					order = 36,
 					type = "toggle",
 					name = L["Hide on LDW MC"],
 					desc = L["Hide nameplates when mind-controlled by Lady Deathwhisper."],
@@ -598,16 +643,16 @@ RBP.MainOptionTable = {
 						end
 					end,
 				},
-				lineBreak16 = {order = 34, type = "description", name = ""},
-				lineBreak17 = {order = 35, type = "description", name = ""},
+				lineBreak17 = {order = 37, type = "description", name = ""},
+				lineBreak18 = {order = 38, type = "description", name = ""},
 				stacking_header = {
-					order = 36,
+					order = 39,
 					type = "header",
 					name = L["Retail-like Stacking"],
 				},
-				lineBreak18 = {order = 37, type = "description", name = ""},
+				lineBreak19 = {order = 40, type = "description", name = ""},
 				stackingEnabled = {
-					order = 38,
+					order = 41,
 					type = "toggle",
 					name = L["Enable"],
 					desc = L["Simulates Retail's nameplate stacking for enemies. This feature has a high CPU cost, use it with discretion."],
@@ -617,10 +662,10 @@ RBP.MainOptionTable = {
 						RBP:UpdateAllShownPlates()
 					end,
 				},
-				lineBreak19 = {order = 39, type = "description", name = ""},
-				lineBreak20 = {order = 40, type = "description", name = ""},
+				lineBreak20 = {order = 42, type = "description", name = ""},
+				lineBreak21 = {order = 43, type = "description", name = ""},
 				xspace = {
-					order = 41,
+					order = 44,
 					type = "range",
 					name = L["Collider Width"],
 					desc = L["Sets the width of the virtual collider centered on each nameplate used to detect overlaps."],
@@ -632,7 +677,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				yspace = {
-					order = 42,
+					order = 45,
 					type = "range",
 					name = L["Collider Height"],
 					desc = L["Sets the height of the virtual collider centered on each nameplate used to detect overlaps."],
@@ -644,7 +689,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				originpos = {
-					order = 43,
+					order = 46,
 					type = "range",
 					name = L["Vertical Offset"],
 					desc = L["Vertically offsets the entire nameplate, including its clickbox."],
@@ -656,7 +701,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				FreezeMouseover = {
-					order = 44,
+					order = 47,
 					type = "toggle",
 					name = L["Freeze Mouseover"],
 					desc = L["Stops the nameplate you're mousing over from moving for better selection."],
@@ -665,7 +710,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				stackingInInstance = {
-					order = 45,
+					order = 48,
 					type = "toggle",
 					name = L["Disable in Open World"],
 					desc = L["Only process stacking inside PvE and PvP instances. This will reduce CPU usage in the open world."],
@@ -677,8 +722,8 @@ RBP.MainOptionTable = {
 						return not RBP.dbp.stackingEnabled
 					end,
 				},
-				lineBreak21 = {order = 46, type = "description", name = ""},
-				lineBreak22 = {order = 47, type = "description", name = ""},
+				lineBreak22 = {order = 49, type = "description", name = ""},
+				lineBreak23 = {order = 50, type = "description", name = ""},
 			},
 		},
 		Text = {
@@ -1244,6 +1289,7 @@ RBP.MainOptionTable = {
 					min = 0,
 					max = 1,
 					step = 0.01,
+					isPercent = true,
 					set = function(info, val)
 						RBP.dbp[info[#info]] = val
 						RBP:UpdateAllHealthBars()
@@ -1289,6 +1335,7 @@ RBP.MainOptionTable = {
 					min = 0,
 					max = 1,
 					step = 0.01,
+					isPercent = true,
 					set = function(info, val)
 						RBP.dbp[info[#info]] = val
 						RBP:UpdateAllGlows()
@@ -1337,6 +1384,7 @@ RBP.MainOptionTable = {
 					min = 0,
 					max = 1,
 					step = 0.01,
+					isPercent = true,
 					set = function(info, val)
 						RBP.dbp[info[#info]] = val
 						RBP:UpdateAllGlows()
@@ -1476,14 +1524,91 @@ RBP.MainOptionTable = {
 				},
 				lineBreak12 = {order = 43, type = "description", name = ""},
 				lineBreak13 = {order = 44, type = "description", name = ""},
-				aggroOverlay_header = {
+				lowHpColoring_header = {
+					order = 44,
+					type = "header",
+					name = L["Low Health Coloring"],
+				},
+				lowHpColor_EnemyPlayers = {
 					order = 45,
+					type = "toggle",
+					name = L["Enemy Players"],
+					set = function(info, val)
+						RBP.dbp[info[#info]] = val
+						RBP:UpdateAllShownPlates()
+					end,
+				},
+				lowHpColor_EnemyNPCs = {
+					order = 46,
+					type = "toggle",
+					name = L["Enemy NPCs"],
+					set = function(info, val)
+						RBP.dbp[info[#info]] = val
+						RBP:UpdateAllShownPlates()
+					end,
+				},
+				lowHpColor_FriendlyPlayers = {
+					order = 47,
+					type = "toggle",
+					name = L["Friendly Players"],
+					set = function(info, val)
+						RBP.dbp[info[#info]] = val
+						RBP:UpdateAllShownPlates()
+					end,
+				},
+				lowHpColor_FriendlyNPCs = {
+					order = 48,
+					type = "toggle",
+					name = L["Friendly NPCs"],
+					set = function(info, val)
+						RBP.dbp[info[#info]] = val
+						RBP:UpdateAllShownPlates()
+					end,
+				},		
+				lineBreak14 = {order = 49, type = "description", name = ""},
+				lowHpColor_threshold = {
+					order = 50,
+					type = "range",
+					name = L["Threshold"],
+					desc = L["Overrides health bar colors when health is at or below the configured percentage threshold."],
+					min = 0,
+					max = 1,
+					step = 0.01,
+					isPercent = true,
+					set = function(info, val)
+						RBP.dbp[info[#info]] = val
+						RBP:UpdateAllShownPlates()
+					end,
+					disabled = function()
+						return not (RBP.dbp.lowHpColor_EnemyPlayers or RBP.dbp.lowHpColor_EnemyNPCs or RBP.dbp.lowHpColor_FriendlyPlayers or RBP.dbp.lowHpColor_FriendlyNPCs)
+					end,
+				},
+				lowHpColor_color = {
+					order = 51,
+					type = "color",
+					name = L["Color"],
+					get = function(info)
+						local c = RBP.dbp[info[#info]]
+						return c[1], c[2], c[3]
+					end,
+					set = function(info, r, g, b)
+						RBP.dbp[info[#info]] = {r, g, b}
+						RBP:UpdateAllShownPlates()
+					end,
+					disabled = function()
+						return not (RBP.dbp.lowHpColor_EnemyPlayers or RBP.dbp.lowHpColor_EnemyNPCs or RBP.dbp.lowHpColor_FriendlyPlayers or RBP.dbp.lowHpColor_FriendlyNPCs)
+					end,
+				},
+				lineBreak15 = {order = 52, type = "description", name = ""},
+				lineBreak16 = {order = 53, type = "description", name = ""},						
+				aggroOverlay_header = {
+					order = 54,
 					type = "header",
 					name = L["Aggro Coloring"],
 				},
-				lineBreak14 = {order = 46, type = "description", name = ""},
+				lineBreak17 = {order = 55, type = "description", name = ""},
 				enableAggroColoring = {
-					order = 47,
+					order = 56,
 					type = "toggle",
 					name = L["Enable"],
 					desc = L["Changes NPC health bar color based on aggro status."],
@@ -1493,10 +1618,10 @@ RBP.MainOptionTable = {
 						RBP:UpdateAllShownPlates()
 					end,
 				},
-				lineBreak15 = {order = 48, type = "description", name = ""},
-				lineBreak16 = {order = 49, type = "description", name = ""},
+				lineBreak18 = {order = 57, type = "description", name = ""},
+				lineBreak19 = {order = 58, type = "description", name = ""},
 				aggroColor = {
-					order = 50,
+					order = 59,
 					type = "color",
 					name = L["Aggro"],
 					get = function(info)
@@ -1511,7 +1636,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				gainingAggroColor = {
-					order = 51,
+					order = 60,
 					type = "color",
 					name = L["Gaining Aggro"],
 					get = function(info)
@@ -1526,7 +1651,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				losingAggroColor = {
-					order = 52,
+					order = 61,
 					type = "color",
 					name = L["Losing Aggro"],
 					get = function(info)
@@ -1541,7 +1666,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				disableAggroOpenworld = {
-					order = 53,
+					order = 62,
 					type = "toggle",
 					name = L["Disable in Open World"],
 					set = function(info, val)
@@ -1553,49 +1678,8 @@ RBP.MainOptionTable = {
 						return not RBP.dbp.enableAggroColoring
 					end,
 				},
-				lineBreak17 = {order = 54, type = "description", name = ""},
-				lineBreak18 = {order = 55, type = "description", name = ""},
-				lowHpColor_header = {
-					order = 56,
-					type = "header",
-					name = L["Low Health Coloring"],
-				},
-				lineBreak19 = {order = 57, type = "description", name = ""},
-				lowHpColor_enabled = {
-					order = 58,
-					type = "toggle",
-					name = L["Enable"],
-					desc = L["Changes the health bar color at or below the configured health percentage. Takes priority over other health bar colors."],
-				},
-				lowHpColor_threshold = {
-					order = 60,
-					type = "range",
-					name = L["Low Health Threshold"] .. " (%)",
-					min = 1,
-					max = 100,
-					step = 1,
-					disabled = function()
-						return not RBP.dbp.lowHpColor_enabled
-					end,
-				},
-				lowHpColor_color = {
-					order = 59,
-					type = "color",
-					name = L["Low Health Color"],
-					get = function(info)
-						local c = RBP.dbp[info[#info]]
-						return c[1], c[2], c[3]
-					end,
-					set = function(info, r, g, b)
-						RBP.dbp[info[#info]] = {r, g, b}
-						RBP:UpdateAllHealthBars()
-					end,
-					disabled = function()
-						return not RBP.dbp.lowHpColor_enabled
-					end,
-				},
-				lineBreak20 = {order = 61, type = "description", name = ""},
-				lineBreak21 = {order = 62, type = "description", name = ""},
+				lineBreak20 = {order = 63, type = "description", name = ""},
+				lineBreak21 = {order = 64, type = "description", name = ""},
 			},
 		},
 		CastBar = {
@@ -1725,6 +1809,7 @@ RBP.MainOptionTable = {
 					min = 0,
 					max = 1,
 					step = 0.01,
+					isPercent = true,
 				},
 				lineBreak5 = {order = 18, type = "description", name = ""},
 				castText_header = {
@@ -2295,6 +2380,7 @@ RBP.MainOptionTable = {
 					min = 0,
 					max = 1,
 					step = 0.01,
+					isPercent = true,
 					set = function(info, val)
 						RBP.dbp[info[#info]] = val
 						RBP:UpdateAllBarlessPlates()
@@ -2311,18 +2397,28 @@ RBP.MainOptionTable = {
 					name = L["Player Name Text"],
 				},
 				lineBreak10 = {order = 20, type = "description", name = ""},
-				barlessPlate_textFont = {
+				barlessPlate_showText = {
 					order = 21,
+					type = "toggle",
+					name = L["Enable"],
+					desc = L["The name text is used as the indicators' anchor reference, even when disabled."],
+					disabled = function()
+						return IsBarlessPlateDisabled()
+					end,
+				},
+				lineBreak11 = {order = 22, type = "description", name = ""},			
+				barlessPlate_textFont = {
+					order = 23,
 					type = "select",
 					name = L["Text Font"],
 					values = RBP.LSM:HashTable("font"),
 					dialogControl = "LSM30_Font",
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_textSize = {
-					order = 22,
+					order = 24,
 					type = "range",
 					name = L["Font Size"],
 					min = 8,
@@ -2335,11 +2431,11 @@ RBP.MainOptionTable = {
 						RBP:UpdateClickboxAttributes()
 					end,
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_textOutline = {
-					order = 23,
+					order = 25,
 					type = "select", 
 					name = L["Outline"],
 					values = {
@@ -2351,11 +2447,11 @@ RBP.MainOptionTable = {
 						["THICKOUTLINE,MONOCHROME"] = L["Monochrome Thick Outline"],
 					},
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_offset = {
-					order = 24,
+					order = 26,
 					type = "range",
 					name = L["Offset Y"],
 					desc = L["Adjusts the visual vertical position (does not affect the clickbox)."],
@@ -2363,11 +2459,11 @@ RBP.MainOptionTable = {
 					max = 50,
 					step = 0.1,
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_textColor = {
-					order = 25,
+					order = 27,
 					type = "color",
 					name = L["Text Color"],
 					get = function(info)
@@ -2380,57 +2476,67 @@ RBP.MainOptionTable = {
 						RBP:UpdateAllShownPlates()
 					end,
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_nameColorByHP = {
-					order = 26,
+					order = 28,
 					type = "toggle",
 					name = L["Gray Out by Health %"],
 					desc = L["Progressively grays the name from right to left based on remaining health."],
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_classColors = {
-					order = 27,
+					order = 29,
 					type = "toggle",
 					name = L["Use class color"],
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showText or IsBarlessPlateDisabled()
+					end,
+				},
+				lineBreak12 = {order = 30, type = "description", name = ""},
+				lineBreak13 = {order = 31, type = "description", name = ""},
+				barlessPlate_NPCnameHeader = {
+					order = 32,
+					type = "header",
+					name = L["NPC Name Text"],
+				},
+				lineBreak14 = {order = 33, type = "description", name = ""},
+				barlessPlate_showNPCtext = {
+					order = 34,
+					type = "toggle",
+					name = L["Enable"],
+					desc = L["The name text is used as the indicators' anchor reference, even when disabled."],
 					disabled = function()
 						return IsBarlessPlateDisabled()
 					end,
 				},
-				lineBreak11 = {order = 28, type = "description", name = ""},
-				lineBreak12 = {order = 29, type = "description", name = ""},
-				barlessPlate_NPCnameHeader = {
-					order = 30,
-					type = "header",
-					name = L["NPC Name Text"],
-				},
-				lineBreak13 = {order = 31, type = "description", name = ""},
+				lineBreak15 = {order = 35, type = "description", name = ""},
 				barlessPlate_NPCtextFont = {
-					order = 32,
+					order = 36,
 					type = "select",
 					name = L["Text Font"],
 					values = RBP.LSM:HashTable("font"),
 					dialogControl = "LSM30_Font",
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showNPCtext or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_NPCtextSize = {
-					order = 33,
+					order = 37,
 					type = "range",
 					name = L["Font Size"],
 					min = 8,
 					max = 20,
 					step = 0.1,
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showNPCtext or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_NPCtextOutline = {
-					order = 34,
+					order = 38,
 					type = "select", 
 					name = L["Outline"],
 					values = {
@@ -2442,11 +2548,11 @@ RBP.MainOptionTable = {
 						["THICKOUTLINE,MONOCHROME"] = L["Monochrome Thick Outline"],
 					},
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showNPCtext or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_NPCoffset = {
-					order = 35,
+					order = 39,
 					type = "range",
 					name = L["Offset Y"],
 					desc = L["Adjusts the visual vertical position (does not affect the clickbox)."],
@@ -2454,11 +2560,11 @@ RBP.MainOptionTable = {
 					max = 50,
 					step = 0.1,
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showNPCtext or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_NPCtextColor = {
-					order = 36,
+					order = 40,
 					type = "color",
 					name = L["Text Color"],
 					get = function(info)
@@ -2471,47 +2577,40 @@ RBP.MainOptionTable = {
 						RBP:UpdateAllShownPlates()
 					end,
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showNPCtext or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_NPCnameColorByHP = {
-					order = 37,
+					order = 41,
 					type = "toggle",
 					name = L["Gray Out by Health %"],
 					desc = L["Progressively grays the name from right to left based on remaining health."],
 					disabled = function()
-						return IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showNPCtext or IsBarlessPlateDisabled()
 					end,
 				},
-				lineBreak14 = {order = 38, type = "description", name = ""},
-				lineBreak15 = {order = 39, type = "description", name = ""},
+				lineBreak16 = {order = 42, type = "description", name = ""},
+				lineBreak17 = {order = 43, type = "description", name = ""},
 				barlessPlate_healthHeader = {
-					order = 40,
+					order = 44,
 					type = "header",
-					name = L["Health Text"],
+					name = L["Player Health Text"],
 				},				
-				lineBreak16 = {order = 41, type = "description", name = ""},
+				lineBreak18 = {order = 45, type = "description", name = ""},
 				barlessPlate_showHealthText = {
-					order = 42,
+					order = 46,
 					type = "toggle",
-					name = L["Show in Players"],
+					name = L["Enable"],
 					disabled = function()
 						return IsBarlessPlateDisabled()
 					end,
 				},
-				barlessPlate_showNPCHealthText = {
-					order = 43,
-					type = "toggle",
-					name = L["Show in NPCs"],
-					disabled = function()
-						return IsBarlessPlateDisabled()
-					end,
-				},
-				lineBreak17 = {order = 44, type = "description", name = ""},
+				lineBreak19 = {order = 47, type = "description", name = ""},
 				barlessPlate_healthTextAnchor = {
-					order = 45,
+					order = 48,
 					type = "select", 
 					name = L["Anchor"],
+					desc = L["Sets the anchor point relative to the name text."],
 					values = {
 						["Left"] = L["Left"],
 						["Top"] = L["Top"],
@@ -2526,64 +2625,189 @@ RBP.MainOptionTable = {
 						RBP:UpdateAllShownPlates()
 					end,
 					disabled = function()
-						return not (RBP.dbp.barlessPlate_showHealthText or RBP.dbp.barlessPlate_showNPCHealthText) or IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showHealthText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_healthTextOffsetX = {
-					order = 46,
+					order = 49,
 					type = "range",
 					name = L["Offset X"],
 					min = -50,
 					max = 50,
 					step = 0.1,
 					disabled = function()
-						return not (RBP.dbp.barlessPlate_showHealthText or RBP.dbp.barlessPlate_showNPCHealthText) or IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showHealthText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_healthTextOffsetY = {
-					order = 47,
+					order = 50,
 					type = "range",
 					name = L["Offset Y"],
 					min = -50,
 					max = 50,
 					step = 0.1,
 					disabled = function()
-						return not (RBP.dbp.barlessPlate_showHealthText or RBP.dbp.barlessPlate_showNPCHealthText) or IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showHealthText or IsBarlessPlateDisabled()
+					end,
+				},
+				barlessPlate_healthTextFont = {
+					order = 51,
+					type = "select",
+					name = L["Text Font"],
+					values = RBP.LSM:HashTable("font"),
+					dialogControl = "LSM30_Font",
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showHealthText or IsBarlessPlateDisabled()
 					end,
 				},
 				barlessPlate_healthTextSize = {
-					order = 48,
+					order = 52,
 					type = "range",
 					name = L["Font Size"],
 					min = 8,
 					max = 20,
 					step = 0.1,
 					disabled = function()
-						return not (RBP.dbp.barlessPlate_showHealthText or RBP.dbp.barlessPlate_showNPCHealthText) or IsBarlessPlateDisabled()
+						return not RBP.dbp.barlessPlate_showHealthText or IsBarlessPlateDisabled()
 					end,
 				},
-				lineBreak18 = {order = 49, type = "description", name = ""},
-				lineBreak19 = {order = 50, type = "description", name = ""},
+				barlessPlate_healthTextOutline = {
+					order = 53,
+					type = "select", 
+					name = L["Outline"],
+					values = {
+						[""] = L["None"],
+						["OUTLINE"] = L["Outline"],
+						["THICKOUTLINE"] = L["Thick Outline"],
+						["MONOCHROME"] = L["Monochrome"],
+						["OUTLINE,MONOCHROME"] = L["Monochrome Outline"],
+						["THICKOUTLINE,MONOCHROME"] = L["Monochrome Thick Outline"],
+					},
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showHealthText or IsBarlessPlateDisabled()
+					end,
+				},
+				lineBreak20 = {order = 54, type = "description", name = ""},
+				lineBreak21 = {order = 55, type = "description", name = ""},
+				barlessPlate_NPChealthHeader = {
+					order = 56,
+					type = "header",
+					name = L["NPC Health Text"],
+				},				
+				lineBreak22 = {order = 57, type = "description", name = ""},
+				barlessPlate_showNPCHealthText = {
+					order = 58,
+					type = "toggle",
+					name = L["Enable"],
+					disabled = function()
+						return IsBarlessPlateDisabled()
+					end,
+				},
+				lineBreak23 = {order = 59, type = "description", name = ""},
+				barlessPlate_NPChealthTextAnchor = {
+					order = 60,
+					type = "select", 
+					name = L["Anchor"],
+					desc = L["Sets the anchor point relative to the name text."],
+					values = {
+						["Left"] = L["Left"],
+						["Top"] = L["Top"],
+						["Right"] = L["Right"],
+						["Bottom"] = L["Bottom"],
+					},
+					set = function(info, val)
+						RBP.dbp[info[#info]] = val
+						RBP.dbp.barlessPlate_NPChealthTextOffsetX = 0
+						RBP.dbp.barlessPlate_NPChealthTextOffsetY = 0
+						RBP:UpdateAllBarlessPlates()
+						RBP:UpdateAllShownPlates()
+					end,
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showNPCHealthText or IsBarlessPlateDisabled()
+					end,
+				},
+				barlessPlate_NPChealthTextOffsetX = {
+					order = 61,
+					type = "range",
+					name = L["Offset X"],
+					min = -50,
+					max = 50,
+					step = 0.1,
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showNPCHealthText or IsBarlessPlateDisabled()
+					end,
+				},
+				barlessPlate_NPChealthTextOffsetY = {
+					order = 62,
+					type = "range",
+					name = L["Offset Y"],
+					min = -50,
+					max = 50,
+					step = 0.1,
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showNPCHealthText or IsBarlessPlateDisabled()
+					end,
+				},
+				barlessPlate_NPChealthTextFont = {
+					order = 63,
+					type = "select",
+					name = L["Text Font"],
+					values = RBP.LSM:HashTable("font"),
+					dialogControl = "LSM30_Font",
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showNPCHealthText or IsBarlessPlateDisabled()
+					end,
+				},
+				barlessPlate_NPChealthTextSize = {
+					order = 64,
+					type = "range",
+					name = L["Font Size"],
+					min = 8,
+					max = 20,
+					step = 0.1,
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showNPCHealthText or IsBarlessPlateDisabled()
+					end,
+				},
+				barlessPlate_NPChealthTextOutline = {
+					order = 65,
+					type = "select", 
+					name = L["Outline"],
+					values = {
+						[""] = L["None"],
+						["OUTLINE"] = L["Outline"],
+						["THICKOUTLINE"] = L["Thick Outline"],
+						["MONOCHROME"] = L["Monochrome"],
+						["OUTLINE,MONOCHROME"] = L["Monochrome Outline"],
+						["THICKOUTLINE,MONOCHROME"] = L["Monochrome Thick Outline"],
+					},
+					disabled = function()
+						return not RBP.dbp.barlessPlate_showNPCHealthText or IsBarlessPlateDisabled()
+					end,
+				},
+				lineBreak24 = {order = 66, type = "description", name = ""},
+				lineBreak25 = {order = 67, type = "description", name = ""},
 				barlessPlate_raidIconHeader = {
-					order = 51,
+					order = 68,
 					type = "header",
 					name = L["Raid Target Icon"],
 				},				
-				lineBreak20 = {order = 52, type = "description", name = ""},
+				lineBreak26 = {order = 69, type = "description", name = ""},
 				barlessPlate_showRaidTarget = {
-					order = 53,
+					order = 70,
 					type = "toggle",
-					name = L["Show Raid Target Icon"],
+					name = L["Enable"],
 					width = "full",
 					disabled = function()
 						return IsBarlessPlateDisabled()
 					end,
 				},
-				lineBreak21 = {order = 54, type = "description", name = ""},
+				lineBreak27 = {order = 71, type = "description", name = ""},
 				barlessPlate_raidTargetIconAnchor = {
-					order = 55,
+					order = 72,
 					type = "select", 
 					name = L["Anchor"],
+					desc = L["Sets the anchor point relative to the name text."],
 					values = {
 						["Left"] = L["Left"],
 						["Top"] = L["Top"],
@@ -2602,7 +2826,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_raidTargetIconOffsetX = {
-					order = 56,
+					order = 73,
 					type = "range",
 					name = L["Offset X"],
 					min = -50,
@@ -2613,7 +2837,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_raidTargetIconOffsetY = {
-					order = 57,
+					order = 74,
 					type = "range",
 					name = L["Offset Y"],
 					min = -50,
@@ -2624,7 +2848,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_raidTargetIconSize = {
-					order = 58,
+					order = 75,
 					type = "range",
 					name = L["Icon Size"],
 					min = 20,
@@ -2634,27 +2858,28 @@ RBP.MainOptionTable = {
 						return not RBP.dbp.barlessPlate_showRaidTarget or IsBarlessPlateDisabled()
 					end,
 				},
-				lineBreak22 = {order = 59, type = "description", name = ""},
-				lineBreak23 = {order = 60, type = "description", name = ""},
+				lineBreak28 = {order = 76, type = "description", name = ""},
+				lineBreak29 = {order = 77, type = "description", name = ""},
 				barlessPlate_classIconHeader = {
-					order = 61,
+					order = 78,
 					type = "header",
 					name = L["Class Icon"],
 				},				
-				lineBreak24 = {order = 62, type = "description", name = ""},
+				lineBreak30 = {order = 79, type = "description", name = ""},
 				barlessPlate_showClassIcon = {
-					order = 63,
+					order = 80,
 					type = "toggle",
-					name = L["Show Class Icon"],
+					name = L["Enable"],
 					disabled = function() 
 						return IsBarlessPlateDisabled()
 					end,
 				},
-				lineBreak25 = {order = 64, type = "description", name = ""},
+				lineBreak31 = {order = 81, type = "description", name = ""},
 				barlessPlate_classIconAnchor = {
-					order = 65,
+					order = 82,
 					type = "select", 
 					name = L["Anchor"],
+					desc = L["Sets the anchor point relative to the name text."],
 					values = {
 						["Left"] = L["Left"],
 						["Top"] = L["Top"],
@@ -2673,7 +2898,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_classIconOffsetX = {
-					order = 66,
+					order = 83,
 					type = "range",
 					name = L["Offset X"],
 					min = -50,
@@ -2684,7 +2909,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_classIconOffsetY = {
-					order = 67,
+					order = 84,
 					type = "range",
 					name = L["Offset Y"],
 					min = -50,
@@ -2695,7 +2920,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_classIconSize = {
-					order = 68,
+					order = 85,
 					type = "range",
 					name = L["Icon Size"],
 					min = 20,
@@ -2705,17 +2930,17 @@ RBP.MainOptionTable = {
 						return not RBP.dbp.barlessPlate_showClassIcon or IsBarlessPlateDisabled()
 					end,
 				},
-				lineBreak26 = {order = 69, type = "description", name = ""},
-				lineBreak27 = {order = 70, type = "description", name = ""},
+				lineBreak32 = {order = 86, type = "description", name = ""},
+				lineBreak33 = {order = 87, type = "description", name = ""},
 				barlessPlate_BGHiconHeader = {
-					order = 71,
+					order = 88,
 					type = "header",
 					name = L["BG Healer Icon"],
 				},				
-				lineBreak28 = {order = 72, type = "description", name = ""},
-				lineBreak29 = {order = 73, type = "description", name = ""},
+				lineBreak34 = {order = 89, type = "description", name = ""},
+				lineBreak35 = {order = 90, type = "description", name = ""},
 				barlessPlate_BGHiconDesc = {
-					order = 74,
+					order = 91,
 					type = "description",
 					fontSize = "medium",
 					name = function()
@@ -2728,12 +2953,13 @@ RBP.MainOptionTable = {
 						end
 					end,
 				},
-				lineBreak30 = {order = 75, type = "description", name = ""},
-				lineBreak31 = {order = 76, type = "description", name = ""},
+				lineBreak36 = {order = 92, type = "description", name = ""},
+				lineBreak37 = {order = 93, type = "description", name = ""},
 				barlessPlate_BGHiconAnchor = {
-					order = 77,
+					order = 94,
 					type = "select", 
 					name = L["Anchor"],
+					desc = L["Sets the anchor point relative to the name text."],
 					values = {
 						["Left"] = L["Left"],
 						["Top"] = L["Top"],
@@ -2752,7 +2978,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_BGHiconOffsetX = {
-					order = 78,
+					order = 95,
 					type = "range",
 					name = L["Offset X"],
 					min = -50,
@@ -2763,7 +2989,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_BGHiconOffsetY = {
-					order = 79,
+					order = 96,
 					type = "range",
 					name = L["Offset Y"],
 					min = -50,
@@ -2774,7 +3000,7 @@ RBP.MainOptionTable = {
 					end,
 				},
 				barlessPlate_BGHiconSize = {
-					order = 80,
+					order = 97,
 					type = "range",
 					name = L["Icon Size"],
 					min = 20,
@@ -2784,8 +3010,8 @@ RBP.MainOptionTable = {
 						return RBP.dbp.barlessPlate_filterBG <= 1 or not IsAddOnLoaded("BattleGroundHealers")
 					end,
 				},
-				lineBreak32 = {order = 81, type = "description", name = ""},
-				lineBreak33 = {order = 82, type = "description", name = ""},
+				lineBreak38 = {order = 98, type = "description", name = ""},
+				lineBreak39 = {order = 99, type = "description", name = ""},
 			},
 		},
 		Totems = {

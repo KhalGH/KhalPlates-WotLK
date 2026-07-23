@@ -21,12 +21,16 @@ local function InitBarTextures(Virtual)
 	Virtual.shieldCastBarBorder:SetTexture(ASSETS .. "PlateRegions\\CastBar-ShieldBorder")
 	Virtual.spellIcon:SetDrawLayer("BORDER")
 	Virtual.ogHealthBarTex:SetTexture(nil)
+	Virtual.ogHealthBarBorder:SetPoint("TOPLEFT", Virtual)
+	Virtual.ogHealthBarBorder:SetPoint("BOTTOMRIGHT", Virtual)
 	Virtual.ogHealthBarBorder:Hide()
+	Virtual.ogNameText:SetPoint("BOTTOM", Virtual, "CENTER")
 	Virtual.ogNameText:Hide()
 	Virtual.ogCastBarTex:SetTexture(nil)
 end
 
 local function SetupThreatGlow(Virtual)
+	Virtual.threatGlow:SetPoint("TOP", Virtual, RBP.TG_TOP_X + RBP.dbp.globalOffsetX, RBP.TG_TOP_Y + RBP.dbp.globalOffsetY)
 	if RBP.dbp.healthBar_border == "Blizzard" then
 		Virtual.threatGlow:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Flash")
 	else
@@ -36,7 +40,7 @@ end
 
 local function UpdateHealthBorder(Virtual)
 	if not Virtual.healthBarBorder then return end
-	Virtual.healthBarBorder:SetPoint("CENTER", RBP.DELTA_X, RBP.DELTA_Y)
+	Virtual.healthBarBorder:SetPoint("CENTER", -RBP.HB_CENTER_X, -RBP.HB_CENTER_Y)
 	if RBP.dbp.healthBar_border == "Blizzard" then
 		Virtual.healthBarBorder:SetTexture("Interface\\Tooltips\\Nameplate-Border")
 	else
@@ -55,16 +59,16 @@ end
 local function UpdateNameText(Virtual)
 	local nameText = Virtual.newNameText
 	if not nameText then return end
-	nameText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.nameText_font), RBP.dbp.nameText_size * RBP.HEIGHT_SCALE, RBP.dbp.nameText_outline)
+	nameText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.nameText_font), RBP.dbp.nameText_size * RBP.NP_SCALE, RBP.dbp.nameText_outline)
 	nameText:ClearAllPoints()
 	if RBP.dbp.healthBar_border == "Blizzard" then
 		if RBP.dbp.nameText_anchor == "CENTER" then
-			nameText:SetPoint(RBP.dbp.nameText_anchor, RBP.dbp.nameText_offsetX + RBP.DELTA_X, RBP.dbp.nameText_offsetY + RBP.DELTA_Y + RBP.dbp.nameText_size * RBP.HEIGHT_SCALE * 0.5)
+			nameText:SetPoint(RBP.dbp.nameText_anchor, RBP.dbp.nameText_offsetX - RBP.HB_CENTER_X, RBP.dbp.nameText_offsetY - RBP.HB_CENTER_Y + RBP.dbp.nameText_size * RBP.NP_SCALE * 0.5)
 		else
-			nameText:SetPoint(RBP.dbp.nameText_anchor, RBP.dbp.nameText_offsetX, RBP.dbp.nameText_offsetY + RBP.DELTA_Y + RBP.dbp.nameText_size * RBP.HEIGHT_SCALE * 0.5)
+			nameText:SetPoint(RBP.dbp.nameText_anchor, RBP.dbp.nameText_offsetX, RBP.dbp.nameText_offsetY - RBP.HB_CENTER_Y + RBP.dbp.nameText_size * RBP.NP_SCALE * 0.5)
 		end
 	else
-		nameText:SetPoint(RBP.dbp.nameText_anchor, RBP.dbp.nameText_offsetX, RBP.dbp.nameText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+		nameText:SetPoint(RBP.dbp.nameText_anchor, RBP.dbp.nameText_offsetX, RBP.dbp.nameText_offsetY + 0.57 * RBP.NP_SCALE)
 	end
 	nameText:SetWidth(RBP.dbp.nameText_width)
 	nameText:SetJustifyH(RBP.dbp.nameText_anchor)
@@ -85,46 +89,46 @@ end
 local function UpdateLevelText(Virtual)
 	if not Virtual.levelText then return end
 	local levelText = Virtual.levelText
-	levelText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.levelText_font), RBP.dbp.levelText_size * RBP.HEIGHT_SCALE, RBP.dbp.levelText_outline)
+	levelText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.levelText_font), RBP.dbp.levelText_size * RBP.NP_SCALE, RBP.dbp.levelText_outline)
 	levelText:ClearAllPoints()
 	if RBP.dbp.healthBar_border == "Blizzard" then
 		if RBP.dbp.levelText_anchor == "Left" then
-			levelText:SetPoint("CENTER", Virtual.healthBar, "LEFT", RBP.dbp.levelText_offsetX - 11.03 * RBP.WIDTH_SCALE, RBP.dbp.levelText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+			levelText:SetPoint("CENTER", Virtual.healthBar, "LEFT", RBP.dbp.levelText_offsetX - 11.03 * RBP.NP_SCALE, RBP.dbp.levelText_offsetY + 0.57 * RBP.NP_SCALE)
 		elseif RBP.dbp.levelText_anchor == "Center" then
-			levelText:SetPoint("CENTER", Virtual.healthBar, "CENTER", RBP.dbp.levelText_offsetX, RBP.dbp.levelText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+			levelText:SetPoint("CENTER", Virtual.healthBar, "CENTER", RBP.dbp.levelText_offsetX, RBP.dbp.levelText_offsetY + 0.57 * RBP.NP_SCALE)
 		else
-			levelText:SetPoint("CENTER", Virtual.healthBar, "RIGHT", RBP.dbp.levelText_offsetX + 9.15 * RBP.WIDTH_SCALE, RBP.dbp.levelText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+			levelText:SetPoint("CENTER", Virtual.healthBar, "RIGHT", RBP.dbp.levelText_offsetX + 9.15 * RBP.NP_SCALE, RBP.dbp.levelText_offsetY + 0.57 * RBP.NP_SCALE)
 		end
 	else
 		if RBP.dbp.levelText_anchor == "Left" then
-			levelText:SetPoint("CENTER", Virtual.healthBar, "LEFT", RBP.dbp.levelText_offsetX - 8.17 * RBP.WIDTH_SCALE, RBP.dbp.levelText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+			levelText:SetPoint("CENTER", Virtual.healthBar, "LEFT", RBP.dbp.levelText_offsetX - 8.17 * RBP.NP_SCALE, RBP.dbp.levelText_offsetY + 0.57 * RBP.NP_SCALE)
 		elseif RBP.dbp.levelText_anchor == "Center" then
-			levelText:SetPoint("CENTER", Virtual.healthBar, "CENTER", RBP.dbp.levelText_offsetX, RBP.dbp.levelText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+			levelText:SetPoint("CENTER", Virtual.healthBar, "CENTER", RBP.dbp.levelText_offsetX, RBP.dbp.levelText_offsetY + 0.57 * RBP.NP_SCALE)
 		else
-			levelText:SetPoint("CENTER", Virtual.healthBar, "RIGHT", RBP.dbp.levelText_offsetX + 8.17 * RBP.WIDTH_SCALE, RBP.dbp.levelText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+			levelText:SetPoint("CENTER", Virtual.healthBar, "RIGHT", RBP.dbp.levelText_offsetX + 8.17 * RBP.NP_SCALE, RBP.dbp.levelText_offsetY + 0.57 * RBP.NP_SCALE)
 		end
 	end
 end
 
 local function UpdateArenaIDText(Virtual)
 	local ArenaIDText = Virtual.ArenaIDText
-	ArenaIDText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.ArenaIDText_font), RBP.dbp.ArenaIDText_size * RBP.HEIGHT_SCALE, RBP.dbp.ArenaIDText_outline)
+	ArenaIDText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.ArenaIDText_font), RBP.dbp.ArenaIDText_size * RBP.NP_SCALE, RBP.dbp.ArenaIDText_outline)
 	ArenaIDText:ClearAllPoints()
 	if RBP.dbp.healthBar_border == "Blizzard" then
 		if RBP.dbp.ArenaIDText_anchor == "Left" then
-			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "LEFT", RBP.dbp.ArenaIDText_offsetX - 6.54 * RBP.WIDTH_SCALE, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.HEIGHT_SCALE)
+			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "LEFT", RBP.dbp.ArenaIDText_offsetX - 6.54 * RBP.NP_SCALE, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.NP_SCALE)
 		elseif RBP.dbp.ArenaIDText_anchor == "Center" then
-			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "CENTER", RBP.dbp.ArenaIDText_offsetX + RBP.DELTA_X, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.HEIGHT_SCALE)
+			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "CENTER", RBP.dbp.ArenaIDText_offsetX - RBP.HB_CENTER_X, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.NP_SCALE)
 		else
-			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "RIGHT", RBP.dbp.ArenaIDText_offsetX + 9.81 * RBP.WIDTH_SCALE, RBP.dbp.ArenaIDText_offsetY + 0.66 * RBP.HEIGHT_SCALE)
+			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "RIGHT", RBP.dbp.ArenaIDText_offsetX + 9.81 * RBP.NP_SCALE, RBP.dbp.ArenaIDText_offsetY + 0.66 * RBP.NP_SCALE)
 		end
 	else
 		if RBP.dbp.ArenaIDText_anchor == "Left" then
-			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "LEFT", RBP.dbp.ArenaIDText_offsetX - 6.54 * RBP.WIDTH_SCALE, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.HEIGHT_SCALE)
+			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "LEFT", RBP.dbp.ArenaIDText_offsetX - 6.54 * RBP.NP_SCALE, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.NP_SCALE)
 		elseif RBP.dbp.ArenaIDText_anchor == "Center" then
-			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "CENTER", RBP.dbp.ArenaIDText_offsetX, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.HEIGHT_SCALE)
+			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "CENTER", RBP.dbp.ArenaIDText_offsetX, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.NP_SCALE)
 		else
-			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "RIGHT", RBP.dbp.ArenaIDText_offsetX + 6.54 * RBP.WIDTH_SCALE, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.HEIGHT_SCALE)
+			ArenaIDText:SetPoint("CENTER", Virtual.healthBar, "RIGHT", RBP.dbp.ArenaIDText_offsetX + 6.54 * RBP.NP_SCALE, RBP.dbp.ArenaIDText_offsetY + 0.33 * RBP.NP_SCALE)
 		end
 	end
 end
@@ -277,20 +281,26 @@ local function UpdateHealthTextValue(healthBar, value)
 				Virtual.healthBarTex:SetTexCoord(0, 1, 0, 1)
 			end
 		end
+		Plate.lowHp = Plate.lowHpColoring and percent <= RBP.dbp.lowHpColor_threshold
 		percent = math_floor(percent * 100)
-		if Plate.BarlessHealthTextIsShown then
-			UpdateBarlessHealthText(Plate.barlessPlate_healthText, percent)
-		end
-		if Plate.barlessNameTextGrayOut and Plate.barlessPlateIsShown then
-			UpdateBarlessNameText(Plate, percent)
+		if Plate.barlessPlateIsShown then
+			if Plate.BarlessHealthTextIsShown then
+				UpdateBarlessHealthText(Plate.barlessPlate_healthText, percent)
+			end
+			if Plate.barlessNameTextGrayOut then
+				UpdateBarlessNameText(Plate, percent)
+			end
 		end
 	else
+		Plate.lowHp = nil
 		Virtual.healthText:SetText("")
-		if Plate.BarlessHealthTextIsShown then
-			Plate.barlessPlate_healthText:SetText("")
-		end
-		if Plate.barlessNameTextGrayOut and Plate.barlessPlateIsShown then
-			UpdateBarlessNameText(Plate, 0)
+		if Plate.barlessPlateIsShown then
+			if Plate.BarlessHealthTextIsShown then
+				Plate.barlessPlate_healthText:SetText("")
+			end
+			if Plate.barlessNameTextGrayOut then
+				UpdateBarlessNameText(Plate, 0)
+			end
 		end
 	end
 end
@@ -298,9 +308,9 @@ end
 local function UpdateHealthText(Virtual)
 	if not Virtual.healthText then return end
 	local healthText = Virtual.healthText
-	healthText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.healthText_font), RBP.dbp.healthText_size * RBP.HEIGHT_SCALE, RBP.dbp.healthText_outline)
+	healthText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.healthText_font), RBP.dbp.healthText_size * RBP.NP_SCALE, RBP.dbp.healthText_outline)
 	healthText:ClearAllPoints()
-	healthText:SetPoint(RBP.dbp.healthText_anchor, RBP.dbp.healthText_offsetX, RBP.dbp.healthText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+	healthText:SetPoint(RBP.dbp.healthText_anchor, RBP.dbp.healthText_offsetX, RBP.dbp.healthText_offsetY + 0.57 * RBP.NP_SCALE)
 	healthText:SetTextColor(unpack(RBP.dbp.healthText_color))
 end
 
@@ -311,9 +321,7 @@ local function SetupHealthText(Virtual)
 	healthText:SetShadowOffset(0.5, -0.5)
 	UpdateHealthText(Virtual)
 	local healthBar = Virtual.healthBar
-	UpdateHealthTextValue(healthBar)
 	healthBar:HookScript("OnValueChanged", UpdateHealthTextValue)
-	healthBar:HookScript("OnShow", UpdateHealthTextValue)
 	if RBP.dbp.healthText_hide then
 		healthText:Hide()
 	end
@@ -355,7 +363,7 @@ local function UpdateTargetGlow(Virtual)
 	targetGlow:SetVertexColor(unpack(RBP.dbp.targetGlow_Color))
 	targetGlow:SetAlpha(RBP.dbp.targetGlow_Alpha)
 	targetGlow:SetSize(RBP.NP_WIDTH * 2, RBP.NP_HEIGHT * 2)
-	targetGlow:SetPoint("CENTER", RBP.DELTA_X, RBP.DELTA_Y)
+	targetGlow:SetPoint("CENTER", -RBP.HB_CENTER_X, -RBP.HB_CENTER_Y)
 	if RBP.dbp.showTargetGlowBorder then
 		if RBP.dbp.healthBar_border == "Blizzard" then
 			if RBP.dbp.targetGlow_Gradient then
@@ -403,15 +411,15 @@ end
 local function UpdateCastText(Virtual)
 	if not Virtual.castText then return end
 	local castText = Virtual.castText
-	castText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.castText_font), RBP.dbp.castText_size * RBP.HEIGHT_SCALE, RBP.dbp.castText_outline)
+	castText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.castText_font), RBP.dbp.castText_size * RBP.NP_SCALE, RBP.dbp.castText_outline)
 	castText:SetTextColor(unpack(RBP.dbp.castText_color))
 	castText:SetJustifyH(RBP.dbp.castText_anchor)
 	castText:SetWidth(RBP.dbp.castText_width)
 	castText:ClearAllPoints()
 	if RBP.dbp.healthBar_border == "Blizzard" then
-		castText:SetPoint(RBP.dbp.castText_anchor, Virtual.castBar, RBP.dbp.castText_offsetX - 7 * RBP.WIDTH_SCALE, RBP.dbp.castText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+		castText:SetPoint(RBP.dbp.castText_anchor, Virtual.castBar, RBP.dbp.castText_offsetX - 7 * RBP.NP_SCALE, RBP.dbp.castText_offsetY + 0.57 * RBP.NP_SCALE)
 	else
-		castText:SetPoint(RBP.dbp.castText_anchor, Virtual.castBar, RBP.dbp.castText_offsetX - 7 * RBP.WIDTH_SCALE, RBP.dbp.castText_offsetY + 0.82 * RBP.HEIGHT_SCALE)
+		castText:SetPoint(RBP.dbp.castText_anchor, Virtual.castBar, RBP.dbp.castText_offsetX - 7 * RBP.NP_SCALE, RBP.dbp.castText_offsetY + 0.82 * RBP.NP_SCALE)
 	end
 end
 
@@ -453,13 +461,13 @@ end
 
 local function UpdateCastTimer(Virtual)
 	local castTimerText = Virtual.castTimerText
-	castTimerText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.castTimerText_font), RBP.dbp.castTimerText_size * RBP.HEIGHT_SCALE, RBP.dbp.castTimerText_outline)
+	castTimerText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.castTimerText_font), RBP.dbp.castTimerText_size * RBP.NP_SCALE, RBP.dbp.castTimerText_outline)
 	castTimerText:SetTextColor(unpack(RBP.dbp.castTimerText_color))
 	castTimerText:ClearAllPoints()
 	if RBP.dbp.healthBar_border == "Blizzard" then
-		castTimerText:SetPoint(RBP.dbp.castTimerText_anchor, RBP.dbp.castTimerText_offsetX - 2.5 * RBP.WIDTH_SCALE, RBP.dbp.castTimerText_offsetY + 0.57 * RBP.HEIGHT_SCALE)
+		castTimerText:SetPoint(RBP.dbp.castTimerText_anchor, RBP.dbp.castTimerText_offsetX - 2.5 * RBP.NP_SCALE, RBP.dbp.castTimerText_offsetY + 0.57 * RBP.NP_SCALE)
 	else
-		castTimerText:SetPoint(RBP.dbp.castTimerText_anchor, RBP.dbp.castTimerText_offsetX - 2.5 * RBP.WIDTH_SCALE, RBP.dbp.castTimerText_offsetY + 0.82 * RBP.HEIGHT_SCALE)
+		castTimerText:SetPoint(RBP.dbp.castTimerText_anchor, RBP.dbp.castTimerText_offsetX - 2.5 * RBP.NP_SCALE, RBP.dbp.castTimerText_offsetY + 0.82 * RBP.NP_SCALE)
 	end
 end
 
@@ -506,13 +514,13 @@ local function UpdateCastBarBorder(Virtual)
 	local castBarBorder = Virtual.castBarBorder
 	local spellIcon = Virtual.spellIcon
 	castBarBorder:SetVertexColor(unpack(RBP.dbp.castBar_borderTint))
-	castBar:SetPoint("BOTTOMRIGHT", castBarBorder, - 3.8 * RBP.WIDTH_SCALE, 4.5 * RBP.HEIGHT_SCALE)
+	castBar:SetPoint("BOTTOMRIGHT", castBarBorder, - 3.8 * RBP.NP_SCALE, 4.5 * RBP.NP_SCALE)
 	if RBP.dbp.healthBar_border == "Blizzard" then
-		spellIcon:SetPoint("CENTER", castBarBorder, "BOTTOMLEFT", 13.16 * RBP.WIDTH_SCALE, 8.58 * RBP.HEIGHT_SCALE)
-		spellIcon:SetSize(13.73 * RBP.WIDTH_SCALE, 13.73 * RBP.HEIGHT_SCALE)
+		spellIcon:SetPoint("CENTER", castBarBorder, "BOTTOMLEFT", 13.16 * RBP.NP_SCALE, 8.58 * RBP.NP_SCALE)
+		spellIcon:SetSize(13.73 * RBP.NP_SCALE, 13.73 * RBP.NP_SCALE)
 	else
-		spellIcon:SetPoint("CENTER", castBarBorder, "BOTTOMLEFT", 11.93 * RBP.WIDTH_SCALE, 8.58 * RBP.HEIGHT_SCALE)
-		spellIcon:SetSize(12.91 * RBP.WIDTH_SCALE, 12.91 * RBP.HEIGHT_SCALE)
+		spellIcon:SetPoint("CENTER", castBarBorder, "BOTTOMLEFT", 11.93 * RBP.NP_SCALE, 8.58 * RBP.NP_SCALE)
+		spellIcon:SetSize(12.91 * RBP.NP_SCALE, 12.91 * RBP.NP_SCALE)
 	end
 end
 
@@ -522,13 +530,13 @@ local function UpdateShieldCastBarBorder(Virtual)
 	local shieldCastBarBorder = Virtual.shieldCastBarBorder
 	local spellIcon = Virtual.spellIcon
 	shieldCastBarBorder:SetVertexColor(unpack(RBP.dbp.castBar_protectedBorderTint))
-	castBar:SetPoint("BOTTOMRIGHT", castBarBorder, - 3 * RBP.WIDTH_SCALE, 0.5 * RBP.HEIGHT_SCALE)
+	castBar:SetPoint("BOTTOMRIGHT", castBarBorder, - 3 * RBP.NP_SCALE, 0.5 * RBP.NP_SCALE)
 	if RBP.dbp.healthBar_border == "Blizzard" then
-		spellIcon:SetPoint("CENTER", castBarBorder, "BOTTOMLEFT", 11.8 * RBP.WIDTH_SCALE, 4.5 * RBP.HEIGHT_SCALE)
-		spellIcon:SetSize(13.73 * RBP.WIDTH_SCALE, 13.73 * RBP.HEIGHT_SCALE)
+		spellIcon:SetPoint("CENTER", castBarBorder, "BOTTOMLEFT", 11.8 * RBP.NP_SCALE, 4.5 * RBP.NP_SCALE)
+		spellIcon:SetSize(13.73 * RBP.NP_SCALE, 13.73 * RBP.NP_SCALE)
 	else
-		spellIcon:SetPoint("CENTER", castBarBorder, "BOTTOMLEFT", 10.6 * RBP.WIDTH_SCALE, 4.5 * RBP.HEIGHT_SCALE)
-		spellIcon:SetSize(13.73 * RBP.WIDTH_SCALE, 13.73 * RBP.HEIGHT_SCALE)
+		spellIcon:SetPoint("CENTER", castBarBorder, "BOTTOMLEFT", 10.6 * RBP.NP_SCALE, 4.5 * RBP.NP_SCALE)
+		spellIcon:SetSize(13.73 * RBP.NP_SCALE, 13.73 * RBP.NP_SCALE)
 	end
 end
 
@@ -793,46 +801,46 @@ end
 
 local function SetupBossIcon(Virtual)
 	local bossIcon = Virtual.bossIcon
-	bossIcon:SetSize(RBP.dbp.bossIcon_size * RBP.WIDTH_SCALE, RBP.dbp.bossIcon_size * RBP.HEIGHT_SCALE)
+	bossIcon:SetSize(RBP.dbp.bossIcon_size * RBP.NP_SCALE, RBP.dbp.bossIcon_size * RBP.NP_SCALE)
 	bossIcon:ClearAllPoints()
 	if RBP.dbp.healthBar_border == "Blizzard" then
 		if RBP.dbp.bossIcon_anchor == "Left" then
-			bossIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT", RBP.dbp.bossIcon_offsetX - 0.8 * RBP.WIDTH_SCALE, RBP.dbp.bossIcon_offsetY)
+			bossIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT", RBP.dbp.bossIcon_offsetX - 0.8 * RBP.NP_SCALE, RBP.dbp.bossIcon_offsetY)
 		elseif RBP.dbp.bossIcon_anchor == "Top" then
-			bossIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.bossIcon_offsetX + RBP.DELTA_X, RBP.dbp.bossIcon_offsetY + 14 * RBP.HEIGHT_SCALE)
+			bossIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.bossIcon_offsetX - RBP.HB_CENTER_X, RBP.dbp.bossIcon_offsetY + 14 * RBP.NP_SCALE)
 		else
-			bossIcon:SetPoint("CENTER", Virtual.healthBar, RBP.dbp.bossIcon_offsetX + 61.1 * RBP.WIDTH_SCALE, RBP.dbp.bossIcon_offsetY + 0.5 * RBP.HEIGHT_SCALE)
+			bossIcon:SetPoint("CENTER", Virtual.healthBar, RBP.dbp.bossIcon_offsetX + 61.1 * RBP.NP_SCALE, RBP.dbp.bossIcon_offsetY + 0.5 * RBP.NP_SCALE)
 		end
 	else
 		if RBP.dbp.bossIcon_anchor == "Left" then
-			bossIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT",  RBP.dbp.bossIcon_offsetX - 0.8 * RBP.WIDTH_SCALE, RBP.dbp.bossIcon_offsetY)
+			bossIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT",  RBP.dbp.bossIcon_offsetX - 0.8 * RBP.NP_SCALE, RBP.dbp.bossIcon_offsetY)
 		elseif RBP.dbp.bossIcon_anchor == "Top" then
-			bossIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.bossIcon_offsetX, RBP.dbp.bossIcon_offsetY + 2.9 * RBP.HEIGHT_SCALE)
+			bossIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.bossIcon_offsetX, RBP.dbp.bossIcon_offsetY + 2.9 * RBP.NP_SCALE)
 		else
-			bossIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT",  RBP.dbp.bossIcon_offsetX + 0.8 * RBP.WIDTH_SCALE, RBP.dbp.bossIcon_offsetY)
+			bossIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT",  RBP.dbp.bossIcon_offsetX + 0.8 * RBP.NP_SCALE, RBP.dbp.bossIcon_offsetY)
 		end
 	end
 end
 
 local function SetupRaidTargetIcon(Virtual)
 	local raidTargetIcon = Virtual.raidTargetIcon
-	raidTargetIcon:SetSize(RBP.dbp.raidTargetIcon_size * RBP.WIDTH_SCALE, RBP.dbp.raidTargetIcon_size * RBP.HEIGHT_SCALE)
+	raidTargetIcon:SetSize(RBP.dbp.raidTargetIcon_size * RBP.NP_SCALE, RBP.dbp.raidTargetIcon_size * RBP.NP_SCALE)
 	raidTargetIcon:ClearAllPoints()
 	if RBP.dbp.healthBar_border == "Blizzard" then
 		if RBP.dbp.raidTargetIcon_anchor == "Left" then
-			raidTargetIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT", RBP.dbp.raidTargetIcon_offsetX - 2.5 * RBP.WIDTH_SCALE, RBP.dbp.raidTargetIcon_offsetY + 0.8 * RBP.HEIGHT_SCALE)
+			raidTargetIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT", RBP.dbp.raidTargetIcon_offsetX - 2.5 * RBP.NP_SCALE, RBP.dbp.raidTargetIcon_offsetY + 0.8 * RBP.NP_SCALE)
 		elseif RBP.dbp.raidTargetIcon_anchor == "Top" then
-			raidTargetIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.raidTargetIcon_offsetX + 9 * RBP.WIDTH_SCALE, RBP.dbp.raidTargetIcon_offsetY + 17.2 * RBP.HEIGHT_SCALE)
+			raidTargetIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.raidTargetIcon_offsetX + 9 * RBP.NP_SCALE, RBP.dbp.raidTargetIcon_offsetY + 17.2 * RBP.NP_SCALE)
 		else
-			raidTargetIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT", RBP.dbp.raidTargetIcon_offsetX + 19.6 * RBP.WIDTH_SCALE, RBP.dbp.raidTargetIcon_offsetY + 0.8 * RBP.HEIGHT_SCALE)
+			raidTargetIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT", RBP.dbp.raidTargetIcon_offsetX + 19.6 * RBP.NP_SCALE, RBP.dbp.raidTargetIcon_offsetY + 0.8 * RBP.NP_SCALE)
 		end
 	else
 		if RBP.dbp.raidTargetIcon_anchor == "Left" then
-			raidTargetIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT",  RBP.dbp.raidTargetIcon_offsetX - 2.5 * RBP.WIDTH_SCALE, RBP.dbp.raidTargetIcon_offsetY + 0.8 * RBP.HEIGHT_SCALE)
+			raidTargetIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT",  RBP.dbp.raidTargetIcon_offsetX - 2.5 * RBP.NP_SCALE, RBP.dbp.raidTargetIcon_offsetY + 0.8 * RBP.NP_SCALE)
 		elseif RBP.dbp.raidTargetIcon_anchor == "Top" then
-			raidTargetIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.raidTargetIcon_offsetX, RBP.dbp.raidTargetIcon_offsetY + 4.1 * RBP.HEIGHT_SCALE)
+			raidTargetIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.raidTargetIcon_offsetX, RBP.dbp.raidTargetIcon_offsetY + 4.1 * RBP.NP_SCALE)
 		else
-			raidTargetIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT",  RBP.dbp.raidTargetIcon_offsetX + 2.5 * RBP.WIDTH_SCALE, RBP.dbp.raidTargetIcon_offsetY + 0.8 * RBP.HEIGHT_SCALE)
+			raidTargetIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT",  RBP.dbp.raidTargetIcon_offsetX + 2.5 * RBP.NP_SCALE, RBP.dbp.raidTargetIcon_offsetY + 0.8 * RBP.NP_SCALE)
 		end
 	end
 end
@@ -843,44 +851,44 @@ local function SetupEliteIcon(Virtual)
 	eliteIcon:ClearAllPoints()
 	if RBP.dbp.eliteIcon_style == "Modern" then
 		eliteIcon:SetTexture(ASSETS .. "PlateRegions\\ModernEliteIcon")
-		eliteIcon:SetSize(29.416 * RBP.dbp.eliteIcon_widthScale * RBP.WIDTH_SCALE, 29.416 * RBP.dbp.eliteIcon_heightScale * RBP.HEIGHT_SCALE)
+		eliteIcon:SetSize(29.416 * RBP.dbp.eliteIcon_widthScale * RBP.NP_SCALE, 29.416 * RBP.dbp.eliteIcon_heightScale * RBP.NP_SCALE)
 		if RBP.dbp.eliteIcon_anchor == "Left" then
 			eliteIcon:SetTexCoord(0.9, 0.1, 0.9, 0.9, 0.1, 0.1, 0.1, 0.9)
-			eliteIcon:SetPoint("LEFT", Virtual.healthBar, "LEFT", RBP.dbp.eliteIcon_offsetX - 12.665 * RBP.WIDTH_SCALE, RBP.dbp.eliteIcon_offsetY + 0.245 * RBP.HEIGHT_SCALE)
+			eliteIcon:SetPoint("LEFT", Virtual.healthBar, "LEFT", RBP.dbp.eliteIcon_offsetX - 12.665 * RBP.NP_SCALE, RBP.dbp.eliteIcon_offsetY + 0.245 * RBP.NP_SCALE)
 		else
 			eliteIcon:SetTexCoord(0.1, 0.1, 0.1, 0.9, 0.9, 0.1, 0.9, 0.9)
 			if RBP.dbp.healthBar_border == "Blizzard" then
-				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + 29.824 * RBP.WIDTH_SCALE, RBP.dbp.eliteIcon_offsetY + 0.245 * RBP.HEIGHT_SCALE)
+				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + 29.824 * RBP.NP_SCALE, RBP.dbp.eliteIcon_offsetY + 0.245 * RBP.NP_SCALE)
 			else
-				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + 12.665 * RBP.WIDTH_SCALE, RBP.dbp.eliteIcon_offsetY + 0.245 * RBP.HEIGHT_SCALE)
+				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + 12.665 * RBP.NP_SCALE, RBP.dbp.eliteIcon_offsetY + 0.245 * RBP.NP_SCALE)
 			end
 		end
 	elseif RBP.dbp.eliteIcon_style == "Minimalist" then
 		eliteIcon:SetTexture(ASSETS .. "PlateRegions\\MinimalistEliteIcon")
-		eliteIcon:SetSize(13.074 * RBP.dbp.eliteIcon_widthScale * RBP.WIDTH_SCALE, 13.074 * RBP.dbp.eliteIcon_heightScale * RBP.HEIGHT_SCALE)
+		eliteIcon:SetSize(13.074 * RBP.dbp.eliteIcon_widthScale * RBP.NP_SCALE, 13.074 * RBP.dbp.eliteIcon_heightScale * RBP.NP_SCALE)
 		if RBP.dbp.eliteIcon_anchor == "Left" then
 			eliteIcon:SetTexCoord(1, 0, 1, 1, 0, 0, 0, 1)
-			eliteIcon:SetPoint("LEFT", Virtual.healthBar, "LEFT", RBP.dbp.eliteIcon_offsetX - 14.708 * RBP.WIDTH_SCALE, RBP.dbp.eliteIcon_offsetY)
+			eliteIcon:SetPoint("LEFT", Virtual.healthBar, "LEFT", RBP.dbp.eliteIcon_offsetX - 14.708 * RBP.NP_SCALE, RBP.dbp.eliteIcon_offsetY)
 		else
 			eliteIcon:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
 			if RBP.dbp.healthBar_border == "Blizzard" then
-				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + 32.276 * RBP.WIDTH_SCALE, RBP.dbp.eliteIcon_offsetY)
+				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + 32.276 * RBP.NP_SCALE, RBP.dbp.eliteIcon_offsetY)
 			else
-				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + 14.708 * RBP.WIDTH_SCALE, RBP.dbp.eliteIcon_offsetY)
+				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + 14.708 * RBP.NP_SCALE, RBP.dbp.eliteIcon_offsetY)
 			end
 		end
 	else
 		eliteIcon:SetTexture("Interface\\Tooltips\\elitenameplateicon")
-		eliteIcon:SetSize(37.63 * RBP.dbp.eliteIcon_widthScale * RBP.WIDTH_SCALE, 27.52 * RBP.dbp.eliteIcon_heightScale * RBP.HEIGHT_SCALE)
+		eliteIcon:SetSize(37.63 * RBP.dbp.eliteIcon_widthScale * RBP.NP_SCALE, 27.52 * RBP.dbp.eliteIcon_heightScale * RBP.NP_SCALE)
 		if RBP.dbp.eliteIcon_anchor == "Left" then
 			eliteIcon:SetTexCoord(0.578125, 0, 0.578125, 0.84375, 0, 0, 0, 0.84375)
-			eliteIcon:SetPoint("LEFT", Virtual.healthBar, "LEFT", RBP.dbp.eliteIcon_offsetX - RBP.WIDTH_SCALE * 14.708, RBP.dbp.eliteIcon_offsetY - RBP.HEIGHT_SCALE * 1.226)
+			eliteIcon:SetPoint("LEFT", Virtual.healthBar, "LEFT", RBP.dbp.eliteIcon_offsetX - RBP.NP_SCALE * 14.708, RBP.dbp.eliteIcon_offsetY - RBP.NP_SCALE * 1.226)
 		else
 			eliteIcon:SetTexCoord(0, 0, 0, 0.84375, 0.578125, 0, 0.578125, 0.84375)
 			if RBP.dbp.healthBar_border == "Blizzard" then
-				eliteIcon:SetPoint("CENTER", Virtual.healthBar, RBP.dbp.eliteIcon_offsetX + RBP.DELTA_X + RBP.NP_WIDTH * 0.438, RBP.dbp.eliteIcon_offsetY + RBP.DELTA_Y - 0.256 * RBP.NP_HEIGHT)
+				eliteIcon:SetPoint("CENTER", Virtual.healthBar, RBP.dbp.eliteIcon_offsetX - RBP.HB_CENTER_X + RBP.NP_WIDTH * 0.438, RBP.dbp.eliteIcon_offsetY - RBP.HB_CENTER_Y - 0.256 * RBP.NP_HEIGHT)
 			else
-				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + RBP.WIDTH_SCALE * 14.708, RBP.dbp.eliteIcon_offsetY - RBP.HEIGHT_SCALE * 1.226)
+				eliteIcon:SetPoint("RIGHT", Virtual.healthBar, "RIGHT", RBP.dbp.eliteIcon_offsetX + RBP.NP_SCALE * 14.708, RBP.dbp.eliteIcon_offsetY - RBP.NP_SCALE * 1.226)
 			end
 		end
 	end
@@ -892,40 +900,40 @@ local function SetupClassIcon(Virtual)
 		Virtual.classIcon:Hide()
 	end
 	local classIcon = Virtual.classIcon
-	classIcon:SetSize(RBP.dbp.classIcon_size * RBP.WIDTH_SCALE, RBP.dbp.classIcon_size * RBP.HEIGHT_SCALE)
+	classIcon:SetSize(RBP.dbp.classIcon_size * RBP.NP_SCALE, RBP.dbp.classIcon_size * RBP.NP_SCALE)
 	classIcon:ClearAllPoints()
 	if RBP.dbp.healthBar_border == "Blizzard" then
 		if RBP.dbp.classIcon_anchor == "Left" then
-			classIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT", RBP.dbp.classIcon_offsetX - 0.4 * RBP.WIDTH_SCALE, RBP.dbp.classIcon_offsetY)
+			classIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT", RBP.dbp.classIcon_offsetX - 0.4 * RBP.NP_SCALE, RBP.dbp.classIcon_offsetY)
 		elseif RBP.dbp.classIcon_anchor == "Top" then
-			classIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.classIcon_offsetX + 9 * RBP.WIDTH_SCALE, RBP.dbp.classIcon_offsetY + 15 * RBP.HEIGHT_SCALE)
+			classIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.classIcon_offsetX + 9 * RBP.NP_SCALE, RBP.dbp.classIcon_offsetY + 15 * RBP.NP_SCALE)
 		else
-			classIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT", RBP.dbp.classIcon_offsetX + 18 * RBP.WIDTH_SCALE, RBP.dbp.classIcon_offsetY)
+			classIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT", RBP.dbp.classIcon_offsetX + 18 * RBP.NP_SCALE, RBP.dbp.classIcon_offsetY)
 		end
 	else
 		if RBP.dbp.classIcon_anchor == "Left" then
-			classIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT", RBP.dbp.classIcon_offsetX - 0.4 * RBP.WIDTH_SCALE, RBP.dbp.classIcon_offsetY)
+			classIcon:SetPoint("RIGHT", Virtual.healthBar, "LEFT", RBP.dbp.classIcon_offsetX - 0.4 * RBP.NP_SCALE, RBP.dbp.classIcon_offsetY)
 		elseif RBP.dbp.classIcon_anchor == "Top" then
-			classIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.classIcon_offsetX, RBP.dbp.classIcon_offsetY + 2.5 * RBP.HEIGHT_SCALE)
+			classIcon:SetPoint("BOTTOM", Virtual.healthBar, "TOP", RBP.dbp.classIcon_offsetX, RBP.dbp.classIcon_offsetY + 2.5 * RBP.NP_SCALE)
 		else
-			classIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT", RBP.dbp.classIcon_offsetX + 0.4 * RBP.WIDTH_SCALE, RBP.dbp.classIcon_offsetY)
+			classIcon:SetPoint("LEFT", Virtual.healthBar, "RIGHT", RBP.dbp.classIcon_offsetX + 0.4 * RBP.NP_SCALE, RBP.dbp.classIcon_offsetY)
 		end
 	end
 end
 
 local function SetupCastBorder(Virtual)
 	if RBP.dbp.healthBar_border == "Blizzard" then
-		Virtual.castBar:SetSize(105.41 * RBP.WIDTH_SCALE, 8.99 * RBP.HEIGHT_SCALE)
-		Virtual.castBarBorder:SetPoint("CENTER", RBP.dbp.globalOffsetX - 0.831 * RBP.WIDTH_SCALE, RBP.dbp.globalOffsetY - 14.7 * RBP.HEIGHT_SCALE)
+		Virtual.castBar:SetSize(105.41 * RBP.NP_SCALE, 8.99 * RBP.NP_SCALE)
+		Virtual.castBarBorder:SetPoint("CENTER", RBP.dbp.globalOffsetX - 0.831 * RBP.NP_SCALE, RBP.dbp.globalOffsetY - 14.7 * RBP.NP_SCALE)
 		Virtual.castBarBorder:SetSize(RBP.NP_WIDTH * 1.017, RBP.NP_HEIGHT)
-		Virtual.shieldCastBarBorder:SetPoint("CENTER", Virtual.castBarBorder, 0.572 * RBP.WIDTH_SCALE, - 11.439 * RBP.HEIGHT_SCALE)
+		Virtual.shieldCastBarBorder:SetPoint("CENTER", Virtual.castBarBorder, 0.572 * RBP.NP_SCALE, - 11.439 * RBP.NP_SCALE)
 		Virtual.shieldCastBarBorder:SetSize(RBP.NP_WIDTH * 1.017, RBP.NP_HEIGHT)
 		Virtual.castGlow:SetSize(RBP.NP_WIDTH * 2.034, RBP.NP_HEIGHT * 2)
 	else
-		Virtual.castBar:SetSize(96.01 * RBP.WIDTH_SCALE, 8.99 * RBP.HEIGHT_SCALE)
-		Virtual.castBarBorder:SetPoint("CENTER", RBP.dbp.globalOffsetX - 9.397 * RBP.WIDTH_SCALE, RBP.dbp.globalOffsetY - 14.7 * RBP.HEIGHT_SCALE)
+		Virtual.castBar:SetSize(96.01 * RBP.NP_SCALE, 8.99 * RBP.NP_SCALE)
+		Virtual.castBarBorder:SetPoint("CENTER", RBP.dbp.globalOffsetX - 9.397 * RBP.NP_SCALE, RBP.dbp.globalOffsetY - 14.7 * RBP.NP_SCALE)
 		Virtual.castBarBorder:SetSize(RBP.NP_WIDTH * 0.926, RBP.NP_HEIGHT)
-		Virtual.shieldCastBarBorder:SetPoint("CENTER", Virtual.castBarBorder, 0.572 * RBP.WIDTH_SCALE, - 11.439 * RBP.HEIGHT_SCALE)
+		Virtual.shieldCastBarBorder:SetPoint("CENTER", Virtual.castBarBorder, 0.572 * RBP.NP_SCALE, - 11.439 * RBP.NP_SCALE)
 		Virtual.shieldCastBarBorder:SetSize(RBP.NP_WIDTH * 0.926, RBP.NP_HEIGHT)
 		Virtual.castGlow:SetSize(RBP.NP_WIDTH * 1.852, RBP.NP_HEIGHT * 2)
 	end
@@ -967,10 +975,44 @@ local function UpdateBarlessPlate(Plate)
 	local barlessPlate_classIcon = Plate.barlessPlate_classIcon
 	local barlessPlate_raidTargetIcon = Plate.barlessPlate_raidTargetIcon
 	local barlessPlate_targetGlow = Plate.barlessPlate_targetGlow
+	local healthBarHighlight = Plate.VirtualPlate.healthBarHighlight
 	if Plate.classKey then
+		local classColor = Plate.classColor
+		if classColor and RBP.dbp.barlessPlate_classColors then
+			Plate.barlessNameTextRGB = {classColor.r, classColor.g, classColor.b}
+		else
+			Plate.barlessNameTextRGB = RBP.dbp.barlessPlate_textColor
+		end
+		if RBP.dbp.barlessPlate_nameColorByHP then
+			Plate.barlessNameTextGrayOut = true
+		else
+			Plate.barlessNameTextGrayOut = nil
+		end
+		if RBP.dbp.barlessPlate_showText then
+			Plate.barlessHideNameText = nil
+		else
+			Plate.barlessHideNameText = true
+		end
 		barlessPlate_nameText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.barlessPlate_textFont), RBP.dbp.barlessPlate_textSize, RBP.dbp.barlessPlate_textOutline)
 		barlessPlate_nameText:SetPoint("TOP", 0, RBP.dbp.barlessPlate_offset)
-		barlessPlate_healthText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.barlessPlate_textFont), RBP.dbp.barlessPlate_healthTextSize, RBP.dbp.barlessPlate_textOutline)
+		barlessPlate_healthText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.barlessPlate_healthTextFont), RBP.dbp.barlessPlate_healthTextSize, RBP.dbp.barlessPlate_textOutline)
+		barlessPlate_healthText:ClearAllPoints()
+		if RBP.dbp.barlessPlate_healthTextAnchor == "Left" then
+			barlessPlate_healthText:SetPoint("RIGHT", barlessPlate_nameText, "LEFT", RBP.dbp.barlessPlate_healthTextOffsetX, RBP.dbp.barlessPlate_healthTextOffsetY)
+		elseif RBP.dbp.barlessPlate_healthTextAnchor == "Right" then
+			barlessPlate_healthText:SetPoint("LEFT", barlessPlate_nameText, "RIGHT", RBP.dbp.barlessPlate_healthTextOffsetX, RBP.dbp.barlessPlate_healthTextOffsetY)
+		elseif RBP.dbp.barlessPlate_healthTextAnchor == "Bottom" then
+			barlessPlate_healthText:SetPoint("TOP", barlessPlate_nameText, "BOTTOM", RBP.dbp.barlessPlate_healthTextOffsetX, RBP.dbp.barlessPlate_healthTextOffsetY)
+		else
+			barlessPlate_healthText:SetPoint("BOTTOM", barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_healthTextOffsetX, RBP.dbp.barlessPlate_healthTextOffsetY)
+		end
+		if RBP.dbp.barlessPlate_showHealthText then
+			barlessPlate_healthText:Show()
+			Plate.BarlessHealthTextIsShown = true
+		else
+			barlessPlate_healthText:Hide()
+			Plate.BarlessHealthTextIsShown = nil
+		end
 		barlessPlate_classIcon:SetSize(RBP.dbp.barlessPlate_classIconSize, RBP.dbp.barlessPlate_classIconSize)
 		barlessPlate_classIcon:ClearAllPoints()
 		if RBP.dbp.barlessPlate_classIconAnchor == "Left" then
@@ -982,21 +1024,48 @@ local function UpdateBarlessPlate(Plate)
 		else
 			barlessPlate_classIcon:SetPoint("BOTTOM", barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_classIconOffsetX, RBP.dbp.barlessPlate_classIconOffsetY)
 		end
+		if RBP.dbp.barlessPlate_showClassIcon and ClassByFriendName[Plate.nameString] then
+			barlessPlate_classIcon:SetTexture(ASSETS .. "Classes\\" .. ClassByFriendName[Plate.nameString])
+			barlessPlate_classIcon:Show()
+		else
+			barlessPlate_classIcon:SetTexture(nil)
+			barlessPlate_classIcon:Hide()
+		end
 	else
+		Plate.barlessNameTextRGB = RBP.dbp.barlessPlate_NPCtextColor
+		if RBP.dbp.barlessPlate_NPCnameColorByHP then
+			Plate.barlessNameTextGrayOut = true
+		else
+			Plate.barlessNameTextGrayOut = nil
+		end
+		if RBP.dbp.barlessPlate_showNPCtext then
+			Plate.barlessHideNameText = nil
+		else
+			Plate.barlessHideNameText = true
+		end	
 		barlessPlate_nameText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.barlessPlate_NPCtextFont), RBP.dbp.barlessPlate_NPCtextSize, RBP.dbp.barlessPlate_NPCtextOutline)
 		barlessPlate_nameText:SetPoint("TOP", 0, RBP.dbp.barlessPlate_NPCoffset)
-		barlessPlate_healthText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.barlessPlate_NPCtextFont), RBP.dbp.barlessPlate_healthTextSize, RBP.dbp.barlessPlate_NPCtextOutline)
+		barlessPlate_healthText:SetFont(RBP.LSM:Fetch("font", RBP.dbp.barlessPlate_NPChealthTextFont), RBP.dbp.barlessPlate_NPChealthTextSize, RBP.dbp.barlessPlate_NPCtextOutline)
+		barlessPlate_healthText:ClearAllPoints()
+		if RBP.dbp.barlessPlate_NPChealthTextAnchor == "Left" then
+			barlessPlate_healthText:SetPoint("RIGHT", barlessPlate_nameText, "LEFT", RBP.dbp.barlessPlate_NPChealthTextOffsetX, RBP.dbp.barlessPlate_NPChealthTextOffsetY)
+		elseif RBP.dbp.barlessPlate_NPChealthTextAnchor == "Right" then
+			barlessPlate_healthText:SetPoint("LEFT", barlessPlate_nameText, "RIGHT", RBP.dbp.barlessPlate_NPChealthTextOffsetX, RBP.dbp.barlessPlate_NPChealthTextOffsetY)
+		elseif RBP.dbp.barlessPlate_NPChealthTextAnchor == "Bottom" then
+			barlessPlate_healthText:SetPoint("TOP", barlessPlate_nameText, "BOTTOM", RBP.dbp.barlessPlate_NPChealthTextOffsetX, RBP.dbp.barlessPlate_NPChealthTextOffsetY)
+		else
+			barlessPlate_healthText:SetPoint("BOTTOM", barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_NPChealthTextOffsetX, RBP.dbp.barlessPlate_NPChealthTextOffsetY)
+		end
+		if RBP.dbp.barlessPlate_showNPCHealthText then
+			barlessPlate_healthText:Show()
+			Plate.BarlessHealthTextIsShown = true
+		else
+			barlessPlate_healthText:Hide()
+			Plate.BarlessHealthTextIsShown = nil
+		end	
 	end
-	barlessPlate_healthText:ClearAllPoints()
-	if RBP.dbp.barlessPlate_healthTextAnchor == "Left" then
-		barlessPlate_healthText:SetPoint("RIGHT", barlessPlate_nameText, "LEFT", RBP.dbp.barlessPlate_healthTextOffsetX, RBP.dbp.barlessPlate_healthTextOffsetY)
-	elseif RBP.dbp.barlessPlate_healthTextAnchor == "Right" then
-		barlessPlate_healthText:SetPoint("LEFT", barlessPlate_nameText, "RIGHT", RBP.dbp.barlessPlate_healthTextOffsetX, RBP.dbp.barlessPlate_healthTextOffsetY)
-	elseif RBP.dbp.barlessPlate_healthTextAnchor == "Bottom" then
-		barlessPlate_healthText:SetPoint("TOP", barlessPlate_nameText, "BOTTOM", RBP.dbp.barlessPlate_healthTextOffsetX, RBP.dbp.barlessPlate_healthTextOffsetY)
-	else
-		barlessPlate_healthText:SetPoint("BOTTOM", barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_healthTextOffsetX, RBP.dbp.barlessPlate_healthTextOffsetY)
-	end	
+	barlessPlate_targetGlow:SetAlpha(RBP.dbp.barlessPlate_targetGlowAlpha)
+	barlessPlate_targetGlow:SetVertexColor(unpack(RBP.dbp.barlessPlate_targetGlowColor))
 	barlessPlate_raidTargetIcon:SetSize(RBP.dbp.barlessPlate_raidTargetIconSize, RBP.dbp.barlessPlate_raidTargetIconSize)
 	barlessPlate_raidTargetIcon:ClearAllPoints()
 	if RBP.dbp.barlessPlate_raidTargetIconAnchor == "Left" then
@@ -1008,8 +1077,24 @@ local function UpdateBarlessPlate(Plate)
 	else
 		barlessPlate_raidTargetIcon:SetPoint("BOTTOM", barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_raidTargetIconOffsetX, RBP.dbp.barlessPlate_raidTargetIconOffsetY)
 	end
-	barlessPlate_targetGlow:SetAlpha(RBP.dbp.barlessPlate_targetGlowAlpha)
-	barlessPlate_targetGlow:SetVertexColor(unpack(RBP.dbp.barlessPlate_targetGlowColor))
+	if Plate.hasRaidIcon and RBP.dbp.barlessPlate_showRaidTarget then
+		barlessPlate_raidTargetIcon:SetTexCoord(Plate.VirtualPlate.raidTargetIcon:GetTexCoord())
+		barlessPlate_raidTargetIcon:Show()
+	else
+		barlessPlate_raidTargetIcon:Hide()
+	end
+	barlessPlate_nameText:SetText(Plate.nameString)
+	barlessPlate_nameText:SetTextColor(unpack(Plate.barlessNameTextRGB))
+	if Plate.barlessHideNameText then
+		barlessPlate_nameText:Hide()	
+		healthBarHighlight:SetTexture(nil)	
+	else
+		barlessPlate_nameText:Show()
+		healthBarHighlight:SetTexture(ASSETS .. "PlateRegions\\BarlessPlate-MouseoverGlow")
+		healthBarHighlight:ClearAllPoints()
+		healthBarHighlight:SetPoint("TOPLEFT", barlessPlate_nameText, -15, 10)
+		healthBarHighlight:SetPoint("BOTTOMRIGHT", barlessPlate_nameText, 15, -11)		
+	end
 end
 
 local function SetupBarlessPlate(Plate)
@@ -1036,7 +1121,6 @@ local function SetupBarlessPlate(Plate)
 	barlessPlate_targetGlow:SetPoint("TOPLEFT", barlessPlate_nameText, -15, 10)
 	barlessPlate_targetGlow:SetPoint("BOTTOMRIGHT", barlessPlate_nameText, 15, -11)
 	barlessPlate_targetGlow:Hide()
-	UpdateBarlessPlate(Plate)
 end
 
 local function CheckBarlessPlate(Plate)
@@ -1055,11 +1139,26 @@ local function CheckBarlessPlate(Plate)
 			SetupBarlessPlate(Plate)
 		end
 		Plate.isBarlessPlate = true
-		return true
+		UpdateBarlessPlate(Plate)
 	end
 end
 
-local function BarlessPlateHandler(Plate)
+local function HideVirtualPlateElements(Virtual)
+	Virtual.healthBar:Hide()
+	Virtual.healthBarIsShown = nil
+	Virtual.castBar:Hide()
+	Virtual.castBarIsShown = nil
+	Virtual.castBarBorder:Hide()
+	Virtual.shieldCastBarBorder:Hide()
+	Virtual.spellIcon:Hide()
+	Virtual.levelText:Hide()
+	Virtual.bossIcon:Hide()
+	Virtual.raidTargetIcon:SetAlpha(0)
+	Virtual.eliteIcon:Hide()
+end
+
+local function BarlessPlateVisibilityHandler(Plate)
+	if not Plate.isBarlessPlate then return end
 	local Virtual = Plate.VirtualPlate
 	Virtual.threatGlow:SetTexture(nil)
 	local barlessPlate = Plate.barlessPlate
@@ -1067,7 +1166,6 @@ local function BarlessPlateHandler(Plate)
 	if Plate.isTarget and RBP.dbp.barlessPlate_excludeTarget then
 		Virtual.healthBar:Show()
 		Virtual.healthBarIsShown = true
-		UpdateMouseoverGlow(Virtual)
 		if Plate.hasBossIcon then
 			Virtual.bossIcon:Show()
 		elseif not RBP.dbp.levelText_hide and not (RBP.inArena and RBP.dbp.PartyIDText_show and RBP.dbp.PartyIDText_HideLevel) then
@@ -1075,78 +1173,42 @@ local function BarlessPlateHandler(Plate)
 			Virtual.levelText:Show()
 		end
 		if Plate.hasRaidIcon then
-			Virtual.raidTargetIcon:Show()
+			Virtual.raidTargetIcon:SetAlpha(1)
 		end
 		if Plate.hasEliteIcon then
 			Virtual.eliteIcon:Show()
 		end
 		barlessPlate:Hide()
-		Plate.barlessPlate_healthText:Hide()
-		Plate.barlessPlate_raidTargetIcon:Hide()
-		Plate.barlessPlate_classIcon:Hide()
 		Plate.barlessPlateIsShown = nil
-		Plate.BarlessHealthTextIsShown = nil
 		if Virtual.BGHframe then
 			Virtual.BGHframe:ModifyIcon()
 		end
 	else
-		local barlessPlate_nameText = Plate.barlessPlate_nameText
-		barlessPlate_nameText:SetTextColor(unpack(Plate.barlessNameTextRGB))
-		barlessPlate_nameText:SetText(Plate.nameString)
-		if Plate.isTarget then
-			Plate.barlessPlate_targetGlow:Show()
-		end
-		local healthBarHighlight = Virtual.healthBarHighlight
-		healthBarHighlight:SetTexture(ASSETS .. "PlateRegions\\BarlessPlate-MouseoverGlow")
-		healthBarHighlight:ClearAllPoints()
-		healthBarHighlight:SetPoint("TOPLEFT", barlessPlate_nameText, -15, 10)
-		healthBarHighlight:SetPoint("BOTTOMRIGHT", barlessPlate_nameText, 15, -11)
-		if (Plate.classKey and RBP.dbp.barlessPlate_showHealthText) or (not Plate.classKey and RBP.dbp.barlessPlate_showNPCHealthText) then
-			Plate.barlessPlate_healthText:Show()
-			Plate.BarlessHealthTextIsShown = true	
-		end
-		if Plate.hasRaidIcon and RBP.dbp.barlessPlate_showRaidTarget then
-			Plate.barlessPlate_raidTargetIcon:SetTexCoord(Virtual.raidTargetIcon:GetTexCoord())
-			Plate.barlessPlate_raidTargetIcon:Show()
-		end
-		if Plate.classKey and RBP.dbp.barlessPlate_showClassIcon and ClassByFriendName[Plate.nameString] then
-			Plate.barlessPlate_classIcon:SetTexture(ASSETS .. "Classes\\" .. ClassByFriendName[Plate.nameString])
-			Plate.barlessPlate_classIcon:Show()
-		end
-		UpdateBarlessPlate(Plate)
 		barlessPlate:Show()
 		Plate.barlessPlateIsShown = true
-		UpdateHealthTextValue(Virtual.healthBar)
-		Virtual.healthBar:Hide()
-		Virtual.healthBarIsShown = nil
-		Virtual.castBar:Hide()
-		Virtual.castBarIsShown = nil
-		Virtual.castBarBorder:Hide()
-		Virtual.shieldCastBarBorder:Hide()
-		Virtual.spellIcon:Hide()
-		Virtual.levelText:Hide()
-		Virtual.bossIcon:Hide()
-		Virtual.raidTargetIcon:Hide()
-		Virtual.eliteIcon:Hide()
+		if Plate.isTarget and not Plate.barlessHideNameText then
+			Plate.barlessPlate_targetGlow:Show()
+		end
+		HideVirtualPlateElements(Virtual)
 		if Virtual.BGHframe then
 			if RBP.dbp.barlessPlate_BGHiconAnchor == "Left" then
-				Virtual.BGHframe:ModifyIcon(true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "RIGHT", barlessPlate_nameText, "LEFT", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY)
+				Virtual.BGHframe:ModifyIcon(true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "RIGHT", Plate.barlessPlate_nameText, "LEFT", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY)
 			elseif RBP.dbp.barlessPlate_BGHiconAnchor == "Right" then
-				Virtual.BGHframe:ModifyIcon(true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "LEFT", barlessPlate_nameText, "RIGHT", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY)
+				Virtual.BGHframe:ModifyIcon(true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "LEFT", Plate.barlessPlate_nameText, "RIGHT", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY)
 			elseif RBP.dbp.barlessPlate_BGHiconAnchor == "Bottom" then
-				Virtual.BGHframe:ModifyIcon(true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "TOP", barlessPlate_nameText, "BOTTOM", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY)
+				Virtual.BGHframe:ModifyIcon(true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "TOP", Plate.barlessPlate_nameText, "BOTTOM", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY)
 			else
-				Virtual.BGHframe:ModifyIcon(true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "BOTTOM", barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY)
+				Virtual.BGHframe:ModifyIcon(true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "BOTTOM", Plate.barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY)
 			end
 		elseif Plate.firstProcessing then
 			if RBP.dbp.barlessPlate_BGHiconAnchor == "Left" then
-				Virtual.shouldModifyBGH = {true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "RIGHT", barlessPlate_nameText, "LEFT", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY}
+				Virtual.shouldModifyBGH = {true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "RIGHT", Plate.barlessPlate_nameText, "LEFT", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY}
 			elseif RBP.dbp.barlessPlate_BGHiconAnchor == "Right" then
-				Virtual.shouldModifyBGH = {true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "LEFT", barlessPlate_nameText, "RIGHT", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY}
+				Virtual.shouldModifyBGH = {true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "LEFT", Plate.barlessPlate_nameText, "RIGHT", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY}
 			elseif RBP.dbp.barlessPlate_BGHiconAnchor == "Bottom" then
-				Virtual.shouldModifyBGH = {true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "TOP", barlessPlate_nameText, "BOTTOM", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY}
+				Virtual.shouldModifyBGH = {true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "TOP", Plate.barlessPlate_nameText, "BOTTOM", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY}
 			else
-				Virtual.shouldModifyBGH = {true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "BOTTOM", barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY}
+				Virtual.shouldModifyBGH = {true, barlessPlate, RBP.dbp.barlessPlate_BGHiconSize, "BOTTOM", Plate.barlessPlate_nameText, "TOP", RBP.dbp.barlessPlate_BGHiconOffsetX, RBP.dbp.barlessPlate_BGHiconOffsetY}
 			end
 		end
 	end
@@ -1179,8 +1241,9 @@ local function UpdateTarget(Plate)
 		if Plate.totemPlate_targetGlow then Plate.totemPlate_targetGlow:Hide() end
 	end
 	if Virtual.isShown then
-		if Plate.isBarlessPlate then	
-			BarlessPlateHandler(Plate)
+		if Plate.isBarlessPlate then
+			BarlessPlateVisibilityHandler(Plate)
+			UpdateHealthTextValue(Virtual.healthBar)
 		end
 		if not Plate.isFriendly and not RBP.dbp.stackingEnabled then
 			if (Plate.isTarget and RBP.dbp.clampTarget) or (Plate.hasBossIcon and RBP.dbp.clampBoss and RBP.inPvEInstance) then
@@ -1205,14 +1268,36 @@ local function SetupTargetHandler(Plate)
 	end)
 end
 
-RBP.TargetHandler = CreateFrame("Frame")
-RBP.TargetHandler:Hide()
-RBP.TargetHandler:SetScript("OnUpdate", function(self)
+local function TargetHandler(Plate)
+	Plate.targetHandler:Show()
+end
+
+RBP.TargetUpdater = CreateFrame("Frame")
+RBP.TargetUpdater:Hide()
+RBP.TargetUpdater:SetScript("OnUpdate", function(self)
 	self:Hide()
 	for Plate in pairs(PlatesVisible) do
 		UpdateTarget(Plate)
 	end
 end)
+
+local function UpdateNonTargetAlpha()
+	if not RBP.hasTarget then return end
+	for Plate in pairs(PlatesVisible) do
+		if Plate:GetAlpha() < 0.999 then
+			Plate:SetAlpha(RBP.dbp.nonTargetAlpha)
+		end
+	end
+end
+
+local NonTargetAlphaDriver = CreateFrame("Frame")
+function RBP:UpdateNonTargetAlphaDriver()
+	if RBP.dbp.modNonTargetAlpha then
+		NonTargetAlphaDriver:SetScript("OnUpdate", UpdateNonTargetAlpha)
+	else
+		NonTargetAlphaDriver:SetScript("OnUpdate", nil)
+	end
+end
 
 local function SetupClickboxTexture(Plate)
 	Plate.clickboxTexture = Plate:CreateTexture(nil, "OVERLAY")
@@ -1222,8 +1307,6 @@ local function SetupClickboxTexture(Plate)
 		Plate.clickboxTexture:Hide()
 	end
 end
-
-local SetupLowHpColor
 
 local function SetupRefinedPlate(Virtual)
 	local Plate = Virtual.RealPlate
@@ -1258,7 +1341,6 @@ local function SetupRefinedPlate(Virtual)
 	SetupCastBorder(Virtual)
 	SetupTargetHandler(Plate)
 	SetupClickboxTexture(Plate)
-	SetupLowHpColor(Virtual)
 end
 
 local firstChecked
@@ -1409,53 +1491,39 @@ local function UpdateClassColor(Plate)
 	Virtual.nameTextIsYellow = false
 end
 
-local function GetLowHpColor(Virtual)
-	local healthBar = Virtual.healthBar
-	local _, max = healthBar:GetMinMaxValues()
-	if not RBP.dbp.lowHpColor_enabled or max <= 0 then
-		return
-	end
-
-	local current = healthBar:GetValue() / max
-	local threshold = RBP.dbp.lowHpColor_threshold / 100
-	if current <= threshold then
-		return RBP.dbp.lowHpColor_color
-	end
-end
-
-local function GetAggroColor(Plate)
-	if not Plate.aggroColoring then return end
-	local threatGlow = Plate.VirtualPlate.threatGlow
-	if not threatGlow:IsVisible() then return end
+local function GetAggroStatus(threatGlow)
+	if not threatGlow:IsVisible() then return 0 end
 	local r, g, b = threatGlow:GetVertexColor()
-	if b > 0.5 then return end
-	if g < 0.5 then return RBP.dbp.aggroColor end
-	if g < 0.9 then return RBP.dbp.losingAggroColor end
-	return RBP.dbp.gainingAggroColor
-end
-
-local function GetFriendColor(Plate)
-	if Plate.classKey == "FRIENDLY_PLAYER" then
-		return Plate.friendColor
-	end
+	if b > 0.5 then return 0 end
+	if g < 0.5 then return 3 end
+	if g < 0.9 then return 2 end
+	return 1
 end
 
 local function UpdateHealthBarColor(Plate)
 	local Virtual = Plate.VirtualPlate
-	local healthBarColor = GetLowHpColor(Virtual)
-		or GetAggroColor(Plate)
-		or GetFriendColor(Plate)
-		or Plate.healthBarColor
-
-	if healthBarColor then
-		Virtual.healthBarTex:SetVertexColor(unpack(healthBarColor))
+	if Plate.lowHp then
+		Virtual.healthBarTex:SetVertexColor(unpack(RBP.dbp.lowHpColor_color))
+	elseif Plate.aggroColoring then
+		local aggroStatus = GetAggroStatus(Virtual.threatGlow)
+		if aggroStatus > 0 then
+			if aggroStatus == 3 then
+				Virtual.healthBarTex:SetVertexColor(unpack(RBP.dbp.aggroColor))
+			elseif aggroStatus == 2 then
+				Virtual.healthBarTex:SetVertexColor(unpack(RBP.dbp.losingAggroColor))
+			elseif aggroStatus == 1 then
+				Virtual.healthBarTex:SetVertexColor(unpack(RBP.dbp.gainingAggroColor))
+			end
+		else
+			Virtual.healthBarTex:SetVertexColor(unpack(Plate.healthBarColor))		
+		end
+	else
+		if Plate.classKey == "FRIENDLY_PLAYER" and Plate.friendColor then
+			Virtual.healthBarTex:SetVertexColor(unpack(Plate.friendColor))
+		else
+			Virtual.healthBarTex:SetVertexColor(unpack(Plate.healthBarColor))
+		end
 	end
-end
-
-SetupLowHpColor = function(Virtual)
-	Virtual.healthBar:HookScript("OnValueChanged", function(healthBar)
-		UpdateHealthBarColor(healthBar.RealPlate)
-	end)
 end
 
 -- SecureHandlers System: Manages nameplate clickbox resizing while in combat
@@ -1464,39 +1532,31 @@ local ResizeClickbox = CreateFrame("Frame", "ResizeClickboxSecureHandler", UIPar
 ResizeClickbox:SetFrameRef("WorldFrame", WorldFrame)
 SecureHandlerWrapScript(ResizeClickbox, "OnShow", ResizeClickbox,
 	[[
-	local WorldFrame = self:GetFrameRef("WorldFrame")
-	local normalWidth = self:GetAttribute("normalWidth")
-	local normalHeight = self:GetAttribute("normalHeight")
-	local totemWidth = self:GetAttribute("totemWidth")
-	local totemHeight = self:GetAttribute("totemHeight")
-	local barlessWidth = self:GetAttribute("barlessWidth")
-	local barlessHeight = self:GetAttribute("barlessHeight")
-	local friendlyWidth = self:GetAttribute("friendlyWidth")
-	local friendlyHeight = self:GetAttribute("friendlyHeight")
 	Plates = Plates or table.new()
 	for plate, shown in pairs(Plates) do
 		if shown and not plate:IsShown() then
 			Plates[plate] = nil
 		end
 	end
+	local WorldFrame = self:GetFrameRef("WorldFrame")
 	for i, nameplate in pairs(newtable(WorldFrame:GetChildren())) do
 		if nameplate:IsShown() and nameplate:IsProtected() and not Plates[nameplate] then
 			Plates[nameplate] = true
 			if WorldFrame:GetID() == 0 then
-				nameplate:SetWidth(normalWidth)
-				nameplate:SetHeight(normalHeight)
+				nameplate:SetWidth(self:GetAttribute("normalWidth"))
+				nameplate:SetHeight(self:GetAttribute("normalHeight"))
 			elseif WorldFrame:GetID() == 1 then
 				nameplate:SetWidth(0.01)
 				nameplate:SetHeight(0.01)
 			elseif WorldFrame:GetID() == 2 then
-				nameplate:SetWidth(totemWidth)
-				nameplate:SetHeight(totemHeight)
+				nameplate:SetWidth(self:GetAttribute("totemWidth"))
+				nameplate:SetHeight(self:GetAttribute("totemHeight"))
 			elseif WorldFrame:GetID() == 3 then
-				nameplate:SetWidth(barlessWidth)
-				nameplate:SetHeight(barlessHeight)
+				nameplate:SetWidth(self:GetAttribute("barlessWidth"))
+				nameplate:SetHeight(self:GetAttribute("barlessHeight"))
 			elseif WorldFrame:GetID() == 4 then
-				nameplate:SetWidth(friendlyWidth)
-				nameplate:SetHeight(friendlyHeight)
+				nameplate:SetWidth(self:GetAttribute("friendlyWidth"))
+				nameplate:SetHeight(self:GetAttribute("friendlyHeight"))
 			end
 		end
 	end
@@ -1591,7 +1651,7 @@ local function ClickboxAttributeUpdater()
 end
 
 local function UpdateClickboxInCombat(Plate)
-	if not Plate.VirtualPlate.isShown or (Plate.isFriendly and RBP.dbp.friendlyClickthrough and RBP.inInstance) then
+	if not Plate.VirtualPlate.isShown or (Plate.isFriendly and RBP.dbp.friendlyClickthrough and RBP.inInstance) or (Plate.isBarlessPlate and Plate.barlessHideNameText) then
 		SetNullClickbox()
 	elseif Plate.totemPlateIsShown then
 		SetTotemClickbox()
@@ -1606,7 +1666,7 @@ local function UpdateClickboxInCombat(Plate)
 end
 
 local function UpdateClickboxOutOfCombat(Plate)
-	if not Plate.VirtualPlate.isShown or (Plate.isFriendly and RBP.dbp.friendlyClickthrough and RBP.inInstance) then
+	if not Plate.VirtualPlate.isShown or (Plate.isFriendly and RBP.dbp.friendlyClickthrough and RBP.inInstance) or (Plate.isBarlessPlate and Plate.barlessHideNameText) then
 		Plate:SetSize(0.01, 0.01)
 	elseif Plate.totemPlateIsShown then
 		Plate:SetSize(RBP.dbp.totemSize * 1.2, RBP.dbp.totemSize * 1.2)
@@ -1616,6 +1676,14 @@ local function UpdateClickboxOutOfCombat(Plate)
 		Plate:SetSize(RBP.NP_WIDTH * RBP.dbp.globalScale * RBP.dbp.friendlyScale * RBP.dbp.clickboxWidthFactor, RBP.NP_HEIGHT * RBP.dbp.globalScale * RBP.dbp.friendlyScale * RBP.dbp.clickboxHeightFactor)
 	else
 		Plate:SetSize(RBP.NP_WIDTH * RBP.dbp.globalScale * RBP.dbp.clickboxWidthFactor, RBP.NP_HEIGHT * RBP.dbp.globalScale * RBP.dbp.clickboxHeightFactor)
+	end
+end
+
+local function UpdateClickbox(Plate)
+	if RBP.inCombat then
+		UpdateClickboxInCombat(Plate)
+	else
+		UpdateClickboxOutOfCombat(Plate)
 	end
 end
 
@@ -1655,7 +1723,6 @@ local function UpdatePlateFlags(Plate)
 	local r, g, b = Virtual.healthBar:GetStatusBarColor()
 	local reaction = ReactionByPlateColor(r, g, b)
 	UpdatePlateReactionFlags(Plate, r, g, b, reaction)
-	Plate.hasRaidIcon = Virtual.raidTargetIcon:IsShown() and true
 	Plate.hasEliteIcon = Virtual.eliteIcon:IsShown() and true
 	Plate.hasBossIcon = Virtual.bossIcon:IsShown() and true
 	Plate.levelNumber = tonumber(Virtual.levelText:GetText())
@@ -1670,7 +1737,6 @@ local function ResetPlateFlags(Plate)
 	Plate.isFriendly = nil
 	Plate.classKey = nil
 	Plate.healthBarColor = nil
-	Plate.hasRaidIcon = nil
 	Plate.hasEliteIcon = nil
 	Plate.hasBossIcon = nil
 	Plate.levelNumber = nil
@@ -1681,6 +1747,8 @@ local function UpdateRefinedPlate(Plate)
 	local Virtual = Plate.VirtualPlate
 	local name = Plate.nameString
 	local level = Plate.levelNumber
+	Virtual.healthBar:SetPoint("BOTTOMLEFT", Virtual, RBP.HB_BOTTOMLEFT_X + RBP.dbp.globalOffsetX, RBP.HB_BOTTOMLEFT_Y + RBP.dbp.globalOffsetY)
+	Plate.hasRaidIcon = Virtual.raidTargetIcon:IsShown() and true
 	if not level or level >= RBP.dbp.levelFilter or Plate.hasBossIcon then
 		local totemKey = RBP.Totems[name]
 		local totemCheck = RBP.dbp.TotemsCheck[totemKey]
@@ -1710,18 +1778,16 @@ local function UpdateRefinedPlate(Plate)
 				end
 				Virtual:Show()
 				Virtual.isShown = true
-				Virtual.healthBar:Hide()
-				Virtual.healthBarIsShown = nil
-				Virtual.castBar:Hide()
-				Virtual.castBarIsShown = nil
-				Virtual.castBarBorder:Hide()
-				Virtual.shieldCastBarBorder:Hide()
-				Virtual.spellIcon:Hide()
-				Virtual.levelText:Hide()
-				Virtual.bossIcon:Hide()
-				Virtual.raidTargetIcon:Hide()	
-			end		
+				HideVirtualPlateElements(Virtual)
+			end	
+			Virtual.threatGlow:SetTexture(nil)	
 		else
+			local levelText = Virtual.levelText
+			local nameText = Virtual.newNameText
+			local raidTargetIcon = Virtual.raidTargetIcon
+			local eliteIcon = Virtual.eliteIcon
+			local bossIcon = Virtual.bossIcon
+			local class = Plate.classKey
 			Virtual:Show()
 			Virtual.isShown = true
 			Virtual.healthBar:Show()
@@ -1733,28 +1799,37 @@ local function UpdateRefinedPlate(Plate)
 			if RBP.dbp.healthBar_progressiveTexCrop then
 				Virtual.healthBarTexCrop = true				
 			end
-			local levelText = Virtual.levelText
-			if Virtual.bossIcon:IsShown() then
+			if Plate.hasBossIcon then
+				bossIcon:Show()
 				levelText:Hide()
 			else
+				bossIcon:Hide()
 				UpdateLevelText(Virtual)
 				levelText:Show()
 			end
 			if RBP.dbp.levelText_hide then
 				levelText:Hide()
 			end
-			local nameText = Virtual.newNameText
 			if RBP.dbp.nameText_hide then
 				nameText:Hide()
 			else
 				nameText:Show()	
 			end
-			local class = Plate.classKey
+			if Plate.hasEliteIcon then
+				eliteIcon:Show()
+			else
+				eliteIcon:Hide()
+			end
+			if Plate.hasRaidIcon then
+				raidTargetIcon:SetAlpha(1)
+			else
+				raidTargetIcon:SetAlpha(0)
+			end
 			if class then
 				if class == "FRIENDLY_PLAYER" then
-					Virtual.bossIcon:Hide()
-				elseif not Virtual.bossIcon:IsShown() and level and level - RBP.playerLevel >= 10 then
-					Virtual.bossIcon:Show()
+					bossIcon:Hide()
+				elseif not bossIcon:IsShown() and level and level - RBP.playerLevel >= 10 then
+					bossIcon:Show()
 					levelText:Hide()
 				end
 				------------------------ Show Arena IDs ------------------------
@@ -1812,33 +1887,26 @@ local function UpdateRefinedPlate(Plate)
 						Virtual.classIcon:Show()
 					end
 				end
+				if Plate.isFriendly then
+					Plate.lowHpColoring = RBP.dbp.lowHpColor_FriendlyPlayers
+				else
+					Plate.lowHpColoring = RBP.dbp.lowHpColor_EnemyPlayers
+				end
 			else
+				if Plate.isFriendly then
+					Plate.lowHpColoring = RBP.dbp.lowHpColor_FriendlyNPCs
+				else
+					Plate.lowHpColoring = RBP.dbp.lowHpColor_EnemyNPCs
+				end
 				if RBP.dbp.enableAggroColoring and not RBP.inPvPInstance and (RBP.inPvEInstance or not RBP.dbp.disableAggroOpenworld) then
 					Virtual.threatGlow:SetTexture(nil)
 					Plate.aggroColoring = true
 				end
 			end
+			UpdateHealthTextValue(Virtual.healthBar)
 			UpdateClassColor(Plate)
 			UpdateHealthBarColor(Plate)
-			----------------- BarlessPlate Check -----------------
-			if CheckBarlessPlate(Plate) then
-				if class then
-					local classColor = Plate.classColor
-					if classColor and RBP.dbp.barlessPlate_classColors then
-						Plate.barlessNameTextRGB = {classColor.r, classColor.g, classColor.b}
-					else
-						Plate.barlessNameTextRGB = RBP.dbp.barlessPlate_textColor
-					end
-					if RBP.dbp.barlessPlate_nameColorByHP then
-						Plate.barlessNameTextGrayOut = true
-					end
-				else
-					Plate.barlessNameTextRGB = RBP.dbp.barlessPlate_NPCtextColor
-					if RBP.dbp.barlessPlate_NPCnameColorByHP then
-						Plate.barlessNameTextGrayOut = true
-					end					
-				end
-			end
+			CheckBarlessPlate(Plate)
 			----------------- Init Enhanced Plate Stacking -----------------
 			if not Plate.isFriendly then
 				if RBP.dbp.stackingEnabled and not StackablePlates[Plate] then
@@ -1861,6 +1929,8 @@ local function ResetRefinedPlate(Plate)
 	Virtual.isShown = nil
 	Virtual.nameTextIsYellow = nil
 	Virtual.healthBarTexCrop = nil
+	Plate.hasRaidIcon = nil
+	Plate.lowHpColoring = nil
 	Plate.aggroColoring = nil
 	Plate.classColor = nil
 	Plate.unitToken = nil
@@ -1871,12 +1941,9 @@ local function ResetRefinedPlate(Plate)
 	end
 	if Plate.barlessPlate then
 		Plate.barlessPlate:Hide()
-		Plate.barlessPlate_healthText:Hide()
-		Plate.barlessPlate_raidTargetIcon:Hide()
-		Plate.barlessPlate_classIcon:Hide()
-		Plate.barlessPlate_classIcon:SetTexture(nil)
 	end
 	Plate.isBarlessPlate = nil
+	Plate.barlessHideNameText = nil
 	Plate.barlessPlateIsShown = nil
 	Plate.BarlessHealthTextIsShown = nil
 	Plate.barlessNameTextRGB = nil
@@ -1901,15 +1968,34 @@ local function PlatesSecUpdate()
 			UpdatePlateReactionFlags(Plate, r, g, b, reaction)
 			ResetRefinedPlate(Plate)
 			UpdateRefinedPlate(Plate)
-			Plate.targetHandler:Show()
+			TargetHandler(Plate)
 			if not RBP.inCombat then
 				UpdateClickboxOutOfCombat(Plate)
 			end
 		end
-		if Plate.aggroColoring then
+		if Plate.lowHpColoring or Plate.aggroColoring then
 			UpdateHealthBarColor(Plate)
 		end
 	end
+end
+
+local NP_COEF_CONST  = 49.5902306216304
+local NP_COEF_LINEAR = 54.5639472689393
+local NP_COEF_QUAD   = 3.18253482362832
+local function EstimateNameplateSize()
+	local w, h = GetScreenWidth(), GetScreenHeight()
+	if not w or not h or h == 0 then
+		return 128, 32
+	end
+	local r = w / h
+	local width = NP_COEF_CONST + NP_COEF_LINEAR * r + NP_COEF_QUAD * r^2
+	local height = width / 4
+	return width, height
+end
+
+function RBP:OverrideNameplateSize()
+	RBP.NP_WIDTH, RBP.NP_HEIGHT = EstimateNameplateSize()
+	RBP.NP_SCALE = RBP.NP_WIDTH/128	
 end
 
 -- Enlarging of WorldFrame, so that nameplates are displayed even if they are very high up, as is the case with large bosses.
@@ -2011,19 +2097,6 @@ function RBP:UpdateAllVirtualsScale()
 	end
 end
 
-function RBP:MoveAllShownPlates(diffX, diffY)
-	for Plate, Virtual in pairs(PlatesVisible) do
-		for _, Region in ipairs(Plate) do
-			for i = 1, Region:GetNumPoints() do
-				local point, relFrame, relPoint, xOfs, yOfs = Region:GetPoint(i)
-                if relFrame == Virtual then
-                    Region:SetPoint(point, Virtual, relPoint, xOfs + diffX, yOfs + diffY)
-                end
-			end
-		end
-	end
-end
-
 function RBP:UpdateAllTexts()
 	for Plate, Virtual in pairs(VirtualPlates) do
 		UpdateNameText(Virtual)
@@ -2048,9 +2121,6 @@ function RBP:UpdateAllHealthBars()
 			Virtual.healthBarTexCrop = nil
 		end
 		UpdateHealthTextValue(Virtual.healthBar)
-		if Plate.healthBarColor then
-			UpdateHealthBarColor(Plate)
-		end
 	end
 end
 
@@ -2146,14 +2216,11 @@ function RBP:UpdateWorldFrameHeight(init)
 	end
 end
 
-function RBP:UpdateAllShownPlates(updateRaidIcon)
+function RBP:UpdateAllShownPlates()
 	for Plate, Virtual in pairs(PlatesVisible) do
-		if updateRaidIcon then
-			Plate.hasRaidIcon = Virtual.raidTargetIcon:IsShown() and true
-		end
 		ResetRefinedPlate(Plate)
 		UpdateRefinedPlate(Plate)
-		Plate.targetHandler:Show()
+		TargetHandler(Plate)
 		if not RBP.inCombat then
 			UpdateClickboxOutOfCombat(Plate)
 		end
@@ -2194,8 +2261,10 @@ function RBP:UpdateProfile()
 	self:UpdateAllGlows()
 	self:UpdateAllCastBarBorders()
 	self:BuildBlacklistUI()
+	self:UpdateAllClickboxTextures()
 	self:UpdateWorldFrameHeight()
 	self:UpdateAllShownPlates()
+	self:UpdateNonTargetAlphaDriver()
 	self:UpdateClickboxAttributes()
 end
 
@@ -2203,6 +2272,7 @@ end
 RBP.VirtualPlates = VirtualPlates
 RBP.PlatesVisible = PlatesVisible
 RBP.UpdateCastTextString = UpdateCastTextString
+RBP.TargetHandler = TargetHandler
 RBP.SetupRefinedPlate = SetupRefinedPlate
 RBP.ForceLevelHide = ForceLevelHide
 RBP.CheckLDWZoneIndoors = CheckLDWZoneIndoors
@@ -2214,8 +2284,7 @@ RBP.UpdateHealthBarColor = UpdateHealthBarColor
 RBP.ExecuteClickboxSecureScript = ExecuteClickboxSecureScript
 RBP.InitPlatesClickboxes = InitPlatesClickboxes
 RBP.ClickboxAttributeUpdater = ClickboxAttributeUpdater
-RBP.UpdateClickboxInCombat = UpdateClickboxInCombat
-RBP.UpdateClickboxOutOfCombat = UpdateClickboxOutOfCombat
+RBP.UpdateClickbox = UpdateClickbox
 RBP.UpdatePlateFlags = UpdatePlateFlags
 RBP.ResetPlateFlags = ResetPlateFlags
 RBP.UpdateRefinedPlate = UpdateRefinedPlate

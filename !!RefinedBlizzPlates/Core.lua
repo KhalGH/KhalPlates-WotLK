@@ -13,6 +13,7 @@ local select, next, pairs, ipairs, unpack, string_format, GetAddOnMetadata, sort
 local VirtualPlates = RBP.VirtualPlates
 local PlatesVisible = RBP.PlatesVisible
 local UpdateCastTextString = RBP.UpdateCastTextString
+local TargetHandler = RBP.TargetHandler
 local SetupRefinedPlate = RBP.SetupRefinedPlate
 local ForceLevelHide = RBP.ForceLevelHide
 local CheckLDWZoneIndoors = RBP.CheckLDWZoneIndoors
@@ -24,8 +25,7 @@ local UpdateHealthBarColor = RBP.UpdateHealthBarColor
 local ExecuteClickboxSecureScript = RBP.ExecuteClickboxSecureScript
 local InitPlatesClickboxes = RBP.InitPlatesClickboxes
 local ClickboxAttributeUpdater = RBP.ClickboxAttributeUpdater
-local UpdateClickboxInCombat = RBP.UpdateClickboxInCombat
-local UpdateClickboxOutOfCombat = RBP.UpdateClickboxOutOfCombat
+local UpdateClickbox = RBP.UpdateClickbox
 local UpdatePlateFlags = RBP.UpdatePlateFlags
 local ResetPlateFlags = RBP.ResetPlateFlags
 local UpdateRefinedPlate = RBP.UpdateRefinedPlate
@@ -63,10 +63,13 @@ RBP.inLDWZone = false
 RBP.playerLevel = UnitLevel("player")
 RBP.NP_WIDTH = 128
 RBP.NP_HEIGHT = 32
-RBP.WIDTH_SCALE = 1
-RBP.HEIGHT_SCALE = 1
-RBP.DELTA_X = 8.5759733829502
-RBP.DELTA_Y = 7.5040053203105
+RBP.NP_SCALE = 1
+RBP.HB_CENTER_X = -8.5759733829502
+RBP.HB_CENTER_Y = -7.5040053203105
+RBP.HB_BOTTOMLEFT_X = 3.9680000548363
+RBP.HB_BOTTOMLEFT_Y = 4
+RBP.TG_TOP_X = -1.28
+RBP.TG_TOP_Y = -8.32
 
 -- Plate handling and updating	
 do
@@ -77,23 +80,10 @@ do
 		PlatesVisible[Plate] = Virtual
 		ExistsVisiblePlates = true
 		NextUpdate = 0 -- sorts instantly
-		--- If an anchor ataches to the original plate (by WoW), re-anchor to the Virtual.
-		for Index, Region in ipairs(Plate) do
-			for Point = 1, Region:GetNumPoints() do
-				local point, relativeTo, relativePoint, xOfs, yOfs = Region:GetPoint(Point)
-				if relativeTo == Plate then
-					Region:SetPoint(point, Virtual, relativePoint, xOfs + RBP.dbp.globalOffsetX, yOfs + RBP.dbp.globalOffsetY)
-				end
-			end
-		end
 		UpdatePlateFlags(Plate)
 		UpdateRefinedPlate(Plate)
-		Plate.targetHandler:Show()
-		if RBP.inCombat then
-			UpdateClickboxInCombat(Plate)
-		else
-			UpdateClickboxOutOfCombat(Plate)
-		end
+		TargetHandler(Plate)
+		UpdateClickbox(Plate)
 	end
 
 	local function PlateOnHide(Plate)
@@ -208,12 +198,14 @@ do
 		if nameplateSizeCheck then
 			nameplateSizeCheck = false
 			RBP.NP_WIDTH, RBP.NP_HEIGHT = Plate:GetSize()
-			RBP.WIDTH_SCALE = RBP.NP_WIDTH/128
-			RBP.HEIGHT_SCALE = RBP.NP_HEIGHT/32
-			local PX, PY = Plate:GetCenter()
-			local hBX, hBY = Plate:GetChildren():GetCenter()
-			RBP.DELTA_X = PX - hBX
-			RBP.DELTA_Y = PY - hBY
+			RBP.NP_SCALE = RBP.NP_WIDTH/128
+			local healthBar = Plate:GetChildren()
+			local NPx, NPy = Plate:GetCenter()
+			local HBx, HBy = healthBar:GetCenter()
+			RBP.HB_CENTER_X, RBP.HB_CENTER_Y = HBx - NPx, HBy - NPy
+			RBP.HB_BOTTOMLEFT_X, RBP.HB_BOTTOMLEFT_Y = select(4, healthBar:GetPoint(1))
+			RBP.TG_TOP_X, RBP.TG_TOP_Y = select(4,Plate:GetRegions():GetPoint(1))
+			RBP:UpdateClickboxAttributes()
 		end
 
 		Virtual:Hide() -- Gets explicitly shown on plate show
@@ -250,7 +242,7 @@ do
 	end
 
 	local ChildCount, NewChildCount = 0
-	WorldFrame:HookScript("OnUpdate", function(self)
+	function RBP:WorldFrameOnUpdate(elapsed)
 		NewChildCount = self:GetNumChildren()
 		if ChildCount ~= NewChildCount then
 			for i = ChildCount + 1, NewChildCount do
@@ -261,9 +253,6 @@ do
 			end
 			ChildCount = NewChildCount
 		end
-	end)
-
-	function RBP:WorldFrameOnUpdate(elapsed)
 		if RBP.dbp.stackingEnabled then
 			UpdateStacking()
 		end
@@ -350,7 +339,7 @@ do
 	local HookScript = EventHandler.HookScript
 	--- Redirects all HookScript calls for the OnUpdate handler to the original plate.
 	-- Also passes the virtual to the hook script instead of the plate.
-	function PlateOverrides:HookScript (Script, Handler, ...)
+	function PlateOverrides:HookScript(Script, Handler, ...)
 		if type(Script) == "string" and Script:lower() == "onupdate" then
 			local Plate = GetParent(self)
 			if Plate.OnUpdate then
@@ -372,10 +361,7 @@ end
 
 function RBP:OnProfileChanged(...)
 	RBP.dbp = self.db.profile
-	self:MoveAllShownPlates(RBP.dbp.globalOffsetX - self.globalOffsetX, RBP.dbp.globalOffsetY - self.globalOffsetY)
 	self:UpdateProfile()
-	self.globalOffsetX = RBP.dbp.globalOffsetX
-	self.globalOffsetY = RBP.dbp.globalOffsetY
 end
 
 function RBP:Initialize()
@@ -386,10 +372,10 @@ function RBP:Initialize()
 	self.db.RegisterCallback(self, "OnProfileDeleted", "OnProfileChanged")
 	
 	RBP.dbp = self.db.profile -- Replace default profile with AceDB profile
-	self.globalOffsetX = RBP.dbp.globalOffsetX
-	self.globalOffsetY = RBP.dbp.globalOffsetY
 
 	RBP:BuildBlacklistUI()
+	RBP:UpdateNonTargetAlphaDriver()
+	RBP:OverrideNameplateSize()
 	ClickboxAttributeUpdater()
 	SetUIVisibility(true)
 
@@ -443,7 +429,7 @@ end
 
 function EventHandler:PLAYER_TARGET_CHANGED()
 	RBP.hasTarget = UnitExists("target") == 1
-	RBP.TargetHandler:Show()
+	RBP.TargetUpdater:Show()
 end
 
 function EventHandler:PLAYER_ENTERING_WORLD()
@@ -503,7 +489,7 @@ function EventHandler:UNIT_AURA(event, unit)
 end
 
 function EventHandler:RAID_TARGET_UPDATE()
-	RBP:UpdateAllShownPlates(true)
+	RBP:UpdateAllShownPlates()
 end
 
 function EventHandler:NAME_PLATE_UNIT_ADDED(event, token)
