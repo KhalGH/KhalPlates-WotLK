@@ -100,6 +100,10 @@ RBP.dbp.healthText_offsetY = 0
 RBP.dbp.healthText_color = {1, 1, 1} -- white
 RBP.dbp.healthText_format = 1
 RBP.dbp.healthText_hideMax = true
+-- Low Health Coloring
+RBP.dbp.lowHpColor_enabled = true
+RBP.dbp.lowHpColor_threshold = 25
+RBP.dbp.lowHpColor_color = {1, 0, 1}
 -- Threat Overlay
 RBP.dbp.enableAggroColoring = false
 RBP.dbp.disableAggroOpenworld = true
@@ -1551,6 +1555,47 @@ RBP.MainOptionTable = {
 				},
 				lineBreak17 = {order = 54, type = "description", name = ""},
 				lineBreak18 = {order = 55, type = "description", name = ""},
+				lowHpColor_header = {
+					order = 56,
+					type = "header",
+					name = L["Low Health Coloring"],
+				},
+				lineBreak19 = {order = 57, type = "description", name = ""},
+				lowHpColor_enabled = {
+					order = 58,
+					type = "toggle",
+					name = L["Enable"],
+					desc = L["Changes the health bar color at or below the configured health percentage. Takes priority over other health bar colors."],
+				},
+				lowHpColor_threshold = {
+					order = 60,
+					type = "range",
+					name = L["Low Health Threshold"] .. " (%)",
+					min = 1,
+					max = 100,
+					step = 1,
+					disabled = function()
+						return not RBP.dbp.lowHpColor_enabled
+					end,
+				},
+				lowHpColor_color = {
+					order = 59,
+					type = "color",
+					name = L["Low Health Color"],
+					get = function(info)
+						local c = RBP.dbp[info[#info]]
+						return c[1], c[2], c[3]
+					end,
+					set = function(info, r, g, b)
+						RBP.dbp[info[#info]] = {r, g, b}
+						RBP:UpdateAllHealthBars()
+					end,
+					disabled = function()
+						return not RBP.dbp.lowHpColor_enabled
+					end,
+				},
+				lineBreak20 = {order = 61, type = "description", name = ""},
+				lineBreak21 = {order = 62, type = "description", name = ""},
 			},
 		},
 		CastBar = {

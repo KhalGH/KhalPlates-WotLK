@@ -1223,6 +1223,8 @@ local function SetupClickboxTexture(Plate)
 	end
 end
 
+local SetupLowHpColor
+
 local function SetupRefinedPlate(Virtual)
 	local Plate = Virtual.RealPlate
 	Plate.firstProcessing = true
@@ -1256,6 +1258,7 @@ local function SetupRefinedPlate(Virtual)
 	SetupCastBorder(Virtual)
 	SetupTargetHandler(Plate)
 	SetupClickboxTexture(Plate)
+	SetupLowHpColor(Virtual)
 end
 
 local firstChecked
@@ -1406,37 +1409,53 @@ local function UpdateClassColor(Plate)
 	Virtual.nameTextIsYellow = false
 end
 
-local function GetAggroStatus(threatGlow)
-	if not threatGlow:IsVisible() then return 0 end
+local function GetLowHpColor(Virtual)
+	local healthBar = Virtual.healthBar
+	local _, max = healthBar:GetMinMaxValues()
+	if not RBP.dbp.lowHpColor_enabled or max <= 0 then
+		return
+	end
+
+	local current = healthBar:GetValue() / max
+	local threshold = RBP.dbp.lowHpColor_threshold / 100
+	if current <= threshold then
+		return RBP.dbp.lowHpColor_color
+	end
+end
+
+local function GetAggroColor(Plate)
+	if not Plate.aggroColoring then return end
+	local threatGlow = Plate.VirtualPlate.threatGlow
+	if not threatGlow:IsVisible() then return end
 	local r, g, b = threatGlow:GetVertexColor()
-	if b > 0.5 then return 0 end
-	if g < 0.5 then return 3 end
-	if g < 0.9 then return 2 end
-	return 1
+	if b > 0.5 then return end
+	if g < 0.5 then return RBP.dbp.aggroColor end
+	if g < 0.9 then return RBP.dbp.losingAggroColor end
+	return RBP.dbp.gainingAggroColor
+end
+
+local function GetFriendColor(Plate)
+	if Plate.classKey == "FRIENDLY_PLAYER" then
+		return Plate.friendColor
+	end
 end
 
 local function UpdateHealthBarColor(Plate)
 	local Virtual = Plate.VirtualPlate
-	if Plate.aggroColoring then
-		local aggroStatus = GetAggroStatus(Virtual.threatGlow)
-		if aggroStatus > 0 then
-			if aggroStatus == 3 then
-				Virtual.healthBarTex:SetVertexColor(unpack(RBP.dbp.aggroColor))
-			elseif aggroStatus == 2 then
-				Virtual.healthBarTex:SetVertexColor(unpack(RBP.dbp.losingAggroColor))
-			elseif aggroStatus == 1 then
-				Virtual.healthBarTex:SetVertexColor(unpack(RBP.dbp.gainingAggroColor))
-			end
-		else
-			Virtual.healthBarTex:SetVertexColor(unpack(Plate.healthBarColor))		
-		end
-	else
-		if Plate.classKey == "FRIENDLY_PLAYER" and Plate.friendColor then
-			Virtual.healthBarTex:SetVertexColor(unpack(Plate.friendColor))
-		else
-			Virtual.healthBarTex:SetVertexColor(unpack(Plate.healthBarColor))
-		end
+	local healthBarColor = GetLowHpColor(Virtual)
+		or GetAggroColor(Plate)
+		or GetFriendColor(Plate)
+		or Plate.healthBarColor
+
+	if healthBarColor then
+		Virtual.healthBarTex:SetVertexColor(unpack(healthBarColor))
 	end
+end
+
+SetupLowHpColor = function(Virtual)
+	Virtual.healthBar:HookScript("OnValueChanged", function(healthBar)
+		UpdateHealthBarColor(healthBar.RealPlate)
+	end)
 end
 
 -- SecureHandlers System: Manages nameplate clickbox resizing while in combat
@@ -2029,6 +2048,9 @@ function RBP:UpdateAllHealthBars()
 			Virtual.healthBarTexCrop = nil
 		end
 		UpdateHealthTextValue(Virtual.healthBar)
+		if Plate.healthBarColor then
+			UpdateHealthBarColor(Plate)
+		end
 	end
 end
 
