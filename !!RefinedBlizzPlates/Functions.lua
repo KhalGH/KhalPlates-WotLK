@@ -1532,29 +1532,30 @@ local ResizeClickbox = CreateFrame("Frame", "ResizeClickboxSecureHandler", UIPar
 ResizeClickbox:SetFrameRef("WorldFrame", WorldFrame)
 SecureHandlerWrapScript(ResizeClickbox, "OnShow", ResizeClickbox,
 	[[
-	Plates = Plates or table.new()
-	for plate, shown in pairs(Plates) do
+	RBP_Plates = RBP_Plates or newtable()
+	for plate, shown in pairs(RBP_Plates) do
 		if shown and not plate:IsShown() then
-			Plates[plate] = nil
+			RBP_Plates[plate] = nil
 		end
 	end
 	local WorldFrame = self:GetFrameRef("WorldFrame")
+	local ID = WorldFrame:GetID()
 	for i, nameplate in pairs(newtable(WorldFrame:GetChildren())) do
-		if nameplate:IsShown() and nameplate:IsProtected() and not Plates[nameplate] then
-			Plates[nameplate] = true
-			if WorldFrame:GetID() == 0 then
+		if not RBP_Plates[nameplate] and nameplate:IsShown() and nameplate:IsProtected() then
+			RBP_Plates[nameplate] = true
+			if ID == 0 then
 				nameplate:SetWidth(self:GetAttribute("normalWidth"))
 				nameplate:SetHeight(self:GetAttribute("normalHeight"))
-			elseif WorldFrame:GetID() == 1 then
+			elseif ID == 1 then
 				nameplate:SetWidth(0.01)
 				nameplate:SetHeight(0.01)
-			elseif WorldFrame:GetID() == 2 then
+			elseif ID == 2 then
 				nameplate:SetWidth(self:GetAttribute("totemWidth"))
 				nameplate:SetHeight(self:GetAttribute("totemHeight"))
-			elseif WorldFrame:GetID() == 3 then
+			elseif ID == 3 then
 				nameplate:SetWidth(self:GetAttribute("barlessWidth"))
 				nameplate:SetHeight(self:GetAttribute("barlessHeight"))
-			elseif WorldFrame:GetID() == 4 then
+			elseif ID == 4 then
 				nameplate:SetWidth(self:GetAttribute("friendlyWidth"))
 				nameplate:SetHeight(self:GetAttribute("friendlyHeight"))
 			end
