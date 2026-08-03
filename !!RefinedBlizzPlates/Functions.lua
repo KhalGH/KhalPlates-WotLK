@@ -1062,7 +1062,9 @@ local function UpdateBarlessPlate(Plate)
 		else
 			barlessPlate_healthText:Hide()
 			Plate.BarlessHealthTextIsShown = nil
-		end	
+		end
+		barlessPlate_classIcon:SetTexture(nil)
+		barlessPlate_classIcon:Hide()
 	end
 	barlessPlate_targetGlow:SetAlpha(RBP.dbp.barlessPlate_targetGlowAlpha)
 	barlessPlate_targetGlow:SetVertexColor(unpack(RBP.dbp.barlessPlate_targetGlowColor))
